@@ -30,7 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/","/login","/account/sign-up","/account/done"
                         ,"/check-email-token","/account/checked-Email", "/board-index"
                         ,"/board-view","/mod-board","/board/board-modify","/remove-board",
-                        "/board/view-reply"
+                        "/board/view-reply", "/check-find-password",
+                        "/account/find-password", "/account/change-password"
                         ).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
                 .anyRequest().authenticated();

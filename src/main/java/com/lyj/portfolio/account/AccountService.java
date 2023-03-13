@@ -57,6 +57,14 @@ public class AccountService implements UserDetailsService {
         javaMailSender.send(mailMessage);
     }
 
+    public void sendMailFindPassword(Account account) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setSubject("비밀번호 찾기 인증");
+        mailMessage.setText("/check-find-password?token=" + account.getFindPasswordToken()
+                + "&email=" + account.getEmail());
+        javaMailSender.send(mailMessage);
+    }
+
     public Account findByEmail(String email) {
         return accountMapper.findByEmail(email);
     }
@@ -85,5 +93,11 @@ public class AccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountMapper.findByUserId(username);
         return new UserAccount(account);
+    }
+
+    public void applyChangedPassword(SignUpForm signUpForm) {
+        String email = signUpForm.getEmail();
+        String encode = passwordEncoder.encode(signUpForm.getPassword());
+        accountMapper.updatePassword(encode, email);
     }
 }

@@ -8,10 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -48,8 +45,7 @@ public class AccountController {
         return view;
     }
 
-
-
+    //메인에서 옮긴애들
 
     @GetMapping("/account/sign-up")
     public String sign_up(Model model) {
@@ -66,5 +62,54 @@ public class AccountController {
         accountService.login(account);
         model.addAttribute("account",account);
         return "redirect:/";
+    }
+
+    @GetMapping("/account/find-password")
+    public String find_password() {
+        return "account/find-password";
+    }
+
+    @PostMapping("/account/find-password")
+    public String find_password_email(@RequestParam(value = "email") String email, Model model) {
+        Account account = accountMapper.findByEmail(email);
+        if(account == null) {
+            model.addAttribute("error","wrong");
+            return "account/find-password";
+        }
+
+        account.generatedFindPasswordToken();
+        accountMapper.insertFindPasswordToken(account);
+        accountService.sendMailFindPassword(account);
+
+        model.addAttribute("message","Mail");
+        return "account/done";
+    }
+
+    @GetMapping("/check-find-password")
+    public String checkPassWordToken(String token, String email, Model model) {
+        String view = "account/check-find-password";
+        Account account = accountService.findByEmail(email);
+        if(account == null) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+        if(!account.isValidPasswordToken(token)) {
+            model.addAttribute("error","wrong.token");
+            return view;
+        }
+
+        model.addAttribute("email",email);
+        model.addAttribute(new SignUpForm());
+        return view;
+    }
+
+    @PostMapping("/account/change-password")
+    public String submitPassword(@Valid @ModelAttribute SignUpForm signUpForm,
+                                 Errors errors, Model model) {
+
+        accountService.applyChangedPassword(signUpForm);
+        model.addAttribute("message","Change");
+
+        return "account/done";
     }
 }

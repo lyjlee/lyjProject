@@ -26,7 +26,8 @@ public interface AccountMapper{
             @Result (property="email", column="user_email"),
             @Result (property="emailVerified", column="user_emailVerified"),
             @Result (property="emailCheckToken", column="user_emailCheckToken"),
-            @Result (property="joinedAt", column="user_JoinedAt")
+            @Result (property="joinedAt", column="user_JoinedAt"),
+            @Result (property="findPasswordToken", column="user_findPasswordToken")
     })
     Account findByEmail(String email);
 
@@ -41,7 +42,14 @@ public interface AccountMapper{
             @Result (property="email", column="user_email"),
             @Result (property="emailVerified", column="user_emailVerified"),
             @Result (property="emailCheckToken", column="user_emailCheckToken"),
-            @Result (property="joinedAt", column="user_JoinedAt")
+            @Result (property="joinedAt", column="user_JoinedAt"),
+            @Result (property="findPasswordToken", column="user_findPasswordToken")
     })
     Account findByUserId(String username);
+
+    @Insert("UPDATE account SET user_findPasswordToken=#{account.findPasswordToken} WHERE user_email = #{account.email}")
+    void insertFindPasswordToken(@Param("account") Account account);
+
+    @Insert("UPDATE account SET user_password=#{password}, user_findPasswordToken=null WHERE user_email = #{email}")
+    void updatePassword(String password, String email);
 }

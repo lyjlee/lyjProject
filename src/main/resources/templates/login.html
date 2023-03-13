@@ -31,7 +31,7 @@
                     <input id="password" type="password" name="password" class="form-control"
                            aria-describedby="passwordHelp" required>
                     <small class="form-text text-muted">비밀번호가 기억나지 않으시면,
-                    <a href="#" th:href="@{/findpassword}">비밀번호 찾기</a></small><br>
+                    <a href="#" th:href="@{/account/find-password}">비밀번호 찾기</a></small><br>
                     <small class="invalid-feedback">패스워드를 입력하세요.</small>
                 </div>
 
@@ -51,5 +51,6 @@
         </div>
     </div>
 <script type="application/javascript" th:replace="fragments::form-validation"></script>
+
 </body>
 </html>
