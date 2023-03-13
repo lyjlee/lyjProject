@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments::head">
+</head>
+<body class="bg-light">
+    <div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+        이메일 인증이 완료되지 않았습니다.
+        <a href="#" th:href="@{/check-email}" class="alert-link">이메일 인증 재전송하기</a>
+    </div>
+    <div th:replace="fragments::main-nav"></div>
+    <div class="container">
+        <!--기존 데이터-->
+        <input id="beforetitle" type="hidden" th:value="${board.title}">
+        <input id="beforedescription" type="hidden" th:value="${board.description}">
+        <!--         -->
+        <div class="py-5 text-center">
+            <h2>게시글 수정</h2>
+        </div>
+        <div class="row justify-content-center">
+            <form class="needs-validation col-sm-6" th:object="${boardForm}"
+                  action="#" th:action="@{/mod-board( no=${board.no} )}" method="post" novalidate>
+                <div class="form-group mb-3">
+                    <label for="title">제목</label>
+                    <input id="title" type="text" th:field="*{title}" th:value="${board.title}" class="form-control"
+                           aria-describedby="user_idHelp" placeholder="제목" required>
+                    <small class="invalid-feedback">제목을 입력하세요.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="description">본문</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" required></textarea>
+                    <small class="invalid-feedback">내용을 입력하세요.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            aria-describedby="submitHelp">게시글 수정</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<script th:replace="fragments::logout"></script>
+<script type="application/javascript" th:replace="fragments::form-validation"></script>
+<script src="/node_modules/summernote/dist/summernote-lite.js"></script>
+<script src="/node_modules/summernote/dist/lang/summernote-ko-KR.js"></script>
+
+<script th:replace="fragments::form-validation"></script>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script type="application/javascript">
+    $(document).ready(function() {
+        var toolbar = [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+        var setting = {
+            popover: {
+                air: [
+                    ['color', ['color']],
+                    ['font', ['bold', 'underline', 'clear']]
+                ]
+            },
+            placeholder: '내용을 입력해주세요.',
+            tabSize: 2,
+            height : 400,
+            lang: 'ko-KR',
+            focus : true,
+            toolbar : toolbar,
+            callbacks: {
+                onImageUpload: function(files, editor, welEditable) {
+                    for (var i = files.length - 1; i >= 0; i--) {
+                        uploadSummernoteImageFile(files[i], this);
+                    }
+                }
+            }
+        };
+        var title = document.getElementById("beforetitle");
+        var titlevalue = title.getAttribute("value");
+        console.log("제목 확인 : " + titlevalue);
+
+        var description = document.getElementById("beforedescription");
+        var desvalue = description.getAttribute("value");
+        console.log("내용 확인 : " + desvalue);
+
+        $('#title').val(titlevalue);
+        $('#description').summernote(setting);
+        var summernoteContent = $('#description').summernote('code',desvalue);
+
+        function uploadSummernoteImageFile(file, el) {
+            var data = new FormData();
+            data.append("file",file);
+
+            $.ajax({
+                url: '/uploadSummernoteImageFile',
+                type: "POST",
+                enctype: 'multipart/form-data',
+                data: data,
+                cache: false,
+                contentType : false,
+                processData : false,
+                success : function(data) {
+                    setTimeout(function () {
+                        console.log("잠시 딜레이 주고 업로드");
+                        $(el).summernote('editor.insertImage', data.url);
+                    },1000);
+                },
+                error : function(e) {
+                    console.log("이미지 업로딩 오류발생");
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

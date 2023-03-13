@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments::head">
+</head>
+<body class="bg-light">
+    <div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+        이메일 인증이 완료되지 않았습니다.
+        <a href="#" th:href="@{/check-email}" class="alert-link">이메일 인증 재전송하기</a>
+    </div>
+    <div th:replace="fragments::main-nav"></div>
+    <div class="container py-5">
+        <div th:replace="fragments::wrong-request"></div>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-10">
+                <div class="pb-3 text-end" th:if="${account != null && account.user_id==board.user_id}" sec:authorize="isAuthenticated()">
+                    <a class="btn btn-primary" th:href="@{/mod-board( no=${board.no} )}" role="button">수정하기</a>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        삭제하기
+                    </button>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">게시글 삭제</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                정말 삭제하시겠습니까?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="removeBoard(removeForm)">삭제하기</button>
+                                <form name="removeForm">
+                                    <input type="hidden" id="boardNumber" name="no" th:value="${board.no}">
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="py-5 text-center">
+                    <h2>게시글</h2>
+                </div>
+                <div class="row justify-content-center">
+                    <form class="needs-validation col-sm-10">
+                        <input type="hidden" id="boardNum" th:value="${board.no}">
+                        <input type="hidden" id="user_id" th:if="${account != null}" th:value="${account.user_id}">
+
+                        <div class="form-group mb-3">
+                            <label for="title">제목</label>
+                            <input id="title" type="text" class="form-control" th:value="${board.title}" readonly>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <input type="hidden" id="description" th:value="${board.description}">
+                            <label for="summernote">본문</label>
+                            <textarea id="summernote" class="form-control" readonly></textarea>
+                        </div>
+                    </form>
+                    <!-- 댓글 시작 -->
+                    <div class="row justify-content-center col-sm-10">
+                        <table class="table table-hover table-bordered" id="replyTable">
+                            <thead>
+                            <th>
+                                <div class="justify-content-center"><b id="replyCount">댓글목록</b></div>
+                            </th>
+                            </thead>
+                            <tbody class="text-start">
+                            </tbody>
+                        </table>
+                        <!--페이징-->
+                        <div class="Page navigation" id="pageDiv">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <button class="page-link" id="firstPage" onclick="firstPage()">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </button>
+                                </li>
+                                <li class="page-item" style="display: none"><button class="page-link" id="ppPage" th:text="${pageNo}-2" onclick="pprePage()">이이전</button> </li>
+                                <li class="page-item"><button class="page-link" id="pPage" th:text="${pageNo}-1" onclick="prePage()">이전페이지</button> </li>
+                                <li class="page-item active"><button class="page-link" id="currentPage" th:text="${pageNo}">현재페이지</button> </li>
+                                <li class="page-item"><button class="page-link" id="nPage" th:text="${pageNo}+1" onclick="nextPage()">다음페이지</button> </li>
+                                <li class="page-item" style="display: none"><button class="page-link" id="nnPage" th:text="${pageNo}+2" onclick="nnextPage()">다다음페이지</button> </li>
+                                <input type="hidden" id="lastP" th:value="${lastPage}">
+
+                                <li class="page-item">
+                                    <button class="page-link" id="nextPage" onclick="endPage()">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <div class="card-body">
+                                <textarea class="form-control" id="replyContent" rows="1" style="resize:none; min-height: 100px"></textarea>
+                            </div>
+                            <div class="card-footer mt-1">
+                                <button class="btn btn-primary" id="replysubmit" style="float:right">등록</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script th:replace="fragments::logout"></script>
+<script src="/node_modules/summernote/dist/summernote-lite.js"></script>
+<script src="/node_modules/summernote/dist/lang/summernote-ko-KR.js"></script>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+
+<script type="application/javascript">
+    var lastPage = null;
+
+    $(document).ready(function() {
+        lastPage = $("#lastP").val();
+        console.log("보드뷰로 가져온 마지막 페이지 : " + lastPage );
+
+        var description = document.getElementById("description");
+        var desvalue = description.getAttribute("value");
+
+        $('#summernote').summernote({
+            toolbar,
+            height : 400,
+            disableResizeEditor : true
+        });
+
+        var summernoteContent = $('#summernote').summernote('code',desvalue);
+        $('#summernote').summernote('disable');
+        var newCss = {};
+        newCss.backgroundColor = "#ffffff";
+        $('.note-editable').css(newCss);
+
+        getReplyList();
+
+        $("#replysubmit").on("click" , function () {
+            var replyContent = $("#replyContent").val();
+            var no = $("#boardNumber").val();
+            var user_id = $("#user_id").val();
+            console.log("게시글 번호 : " + no);
+            $.ajax({
+                url : "/board/add-reply",
+                data : {
+                    "content" : replyContent,
+                    "no" : no,
+                    "user_id" : user_id
+                },
+                type : "post",
+                success : function (result) {
+                    console.log("맨 끝 페이지 : " + result.pageInfoList.pageNum + "   끝 페이지 댓글 수 : "
+                        + result.pageInfoList.numberOfLastPageReply);
+                    $("#replyContent").val('');
+
+                    document.getElementById("currentPage").innerText=result.pageInfoList.pageNum;
+
+                    lastPage = document.getElementById("currentPage").innerText;
+
+                    getReplyList();
+
+                    $('#ppPage').parent().css("display","block");
+                    $('#pPage').parent().css("display","block");
+                    $('#prePage').parent().css("display","block");
+                    $('#nPage').parent().css("display","none");
+                    $('#nnPage').parent().css("display","none");
+                    $('#nextPage').parent().css("display","none");
+                },
+                error : function () {
+                    console.log("댓글 등록 ajax 요청 실패");
+                }
+            })
+        });
+
+        if(document.getElementById("pPage").innerText = 1) {
+            $('#ppPage').parent().css("display","none");
+            $('#pPage').parent().css("display","none");
+            $('#prePage').parent().css("display","none");
+            $('#nnPage').parent().css("display","block");
+        }
+    });
+
+    // 게시글 삭제
+    function removeBoard(formName) {
+        formName.action = "/remove-board";
+        formName.method = "get";
+        formName.submit();
+    }
+
+    // 댓글 불러오기
+    function getReplyList() {
+        var no = $("#boardNumber").val();
+        var page = $("#currentPage").html();
+        $.ajax({
+            url : "/board/view-reply",
+            data : {
+                "no" : no,
+                "page" : page
+            },
+            type : "get",
+            success : function (result) {
+                var tableBody = $('#replyTable tbody');
+                var user_id=$("#user_id").val();
+                console.log("현재 로그인한 아디 : " + user_id);
+                tableBody.html('');
+                $("replyCount").text("댓글 (" + result.length + ")")
+                if(result != null) {
+                    console.log(result);
+                    for ( var i in result) {
+                        var rDiv = $("<div id='replyNo" + result[i].No + "'>");
+                        var rDiv2 = $("<div class='flex-grow-1 hoverReply' id='hoverDiv" + result[i].No + "' onclick='nestedReply(" + result[i].No + "," + result[i].level + ")'>");
+                        var rtr = $("<tr class='w-100 d-flex flex-row'>");
+                        var rLevel = $("<span style='margin-left: " + (result[i].level-1)*15 + "px'></span>")
+                        var rUser_id = $("<td id='replyId"+ result[i].No +"' width='100'>").text(result[i].user_id);
+                        var rContent = $("<td id='replyContent"+ result[i].No + "'>").text(result[i].content);
+                        if(result[i].user_id == 'null') {
+                            rUser_id = $("").text("");
+                            rDiv2 = $("<div class='flex-grow-1' id='hoverDiv" + result[i].No + "'>");
+                        }
+                        var Rbtn = $("<td width='61'>")
+                            .append("<button class='btn btn-primary' id='editBtn" + result[i].No + "' onclick='editReply(" + result[i].No + ")'>수정</button><br>")
+                            .append("<button class='btn btn-danger' id='removeBtn" + result[i].No + "' onclick='removeReply(" + result[i].No + ")'>삭제</button>");
+                        if(result[i].user_id != user_id) {
+                            Rbtn = $("<td height='78'>");
+                        }
+                        // var Rbtn = $("<td width='80'>");
+                        rDiv2.append(rUser_id);
+                        rDiv2.append(rContent);
+                        rtr.append(rDiv2);
+                        rtr.append(Rbtn);
+                        rtr.prepend(rLevel);
+                        rDiv.append(rtr);
+                        tableBody.append(rDiv);
+                    }
+                }
+                $(".hoverReply").css("cursor","pointer")
+                    .hover(function(){
+                    $(this).css("background", "#dcdcdc");
+                }, function(){
+                    $(this).css("background", "#F8F9FA");
+                });
+
+                var cPage = document.getElementById("currentPage").innerText;
+
+                document.getElementById("ppPage").innerText = parseInt(cPage) - 2;
+                document.getElementById("pPage").innerText = parseInt(cPage) - 1;
+                document.getElementById("nPage").innerText = parseInt(cPage) + 1;
+                document.getElementById("nnPage").innerText = parseInt(cPage) + 2;
+
+                if(document.getElementById("currentPage").innerText<lastPage
+                    && document.getElementById("currentPage").innerText>=2) {
+                    $("#ppPage").parent().css("display","none");
+                    $("#pPage").parent().css("display","block");
+                    $("#nPage").parent().css("display","block");
+                    $("#nnPage").parent().css("display","none");
+                    $("#firstPage").parent().css("display","block");
+                    $("#nextPage").parent().css("display","block");
+
+                }else if(document.getElementById("currentPage").innerText == 1) {
+                    $("#ppPage").parent().css("display","none");
+                    $("#pPage").parent().css("display","none");
+                    $("#nPage").parent().css("display","block");
+                    $("#nnPage").parent().css("display","block");
+                    $("#firstPage").parent().css("display","none");
+                    $("#nextPage").parent().css("display","block");
+                }else if(document.getElementById("currentPage").innerText == lastPage) {
+                    $("#ppPage").parent().css("display","block");
+                    $("#pPage").parent().css("display","block");
+                    $("#nPage").parent().css("display","none");
+                    $("#nnPage").parent().css("display","none");
+                    $("#firstPage").parent().css("display","block");
+                    $("#nextPage").parent().css("display","none");
+                }
+
+            if(lastPage <= 3 && document.getElementById("currentPage").innerText <= lastPage) {
+            var current = document.getElementById("currentPage").innerText;
+
+            $("#firstPage").parent().css("display","none");
+            $("#nextPage").parent().css("display","none");
+
+                if(current == 1) {
+                    $("#ppPage").parent().css("display","none");
+                    $("#pPage").parent().css("display","none");
+                    $("#nPage").parent().css("display","block");
+                    $("#nnPage").parent().css("display","block");
+                }else if(current == 2) {
+                    $("#ppPage").parent().css("display","none");
+                    $("#pPage").parent().css("display","block");
+                    $("#nPage").parent().css("display","block");
+                    $("#nnPage").parent().css("display","none");
+                }else if(current == 3) {
+                    $("#ppPage").parent().css("display","block");
+                    $("#pPage").parent().css("display","block");
+                    $("#nPage").parent().css("display","none");
+                    $("#nnPage").parent().css("display","none");
+                }
+            }
+
+            if(lastPage<=2) {
+                if(lastPage == 2 && current == 1) {
+                    $("#nnPage").parent().css("display","none");
+                }else if(lastPage == 2 && current == 2) {
+                    $("#nPage").parent().css("display","none");
+                    $("#nnPage").parent().css("display","none");
+                }
+                else if(lastPage == 1) {
+                    $("#nPage").parent().css("display","none");
+                    $("#nnPage").parent().css("display","none");
+                }
+            }
+                if(lastPage == "0") {
+                    $("#pageDiv").css("display","none");
+                }else {
+                    $("#pageDiv").css("display","block");
+                }
+            },
+            error : function () {
+                console.log("댓글목록 불러오기 실패");
+            }
+        });
+    }
+
+    // 댓글 수정
+    function editReply(replyNumber) {
+        var editId = document.getElementById("replyId"+replyNumber).innerText;
+        var editContent = document.getElementById("replyContent"+replyNumber).innerText;
+        var editBtn = document.getElementById("editBtn"+replyNumber).parentNode;
+
+        console.log(editBtn);
+
+        document.getElementById("replyContent"+replyNumber).innerText="";
+        document.getElementById("replyContent"+replyNumber).innerHTML=
+            "<textarea class='form-control' id='editReply' style='resize:none;min-height: 80px'>" + editContent + "</textarea>";
+        document.getElementById("replyContent"+replyNumber).innerHTML+=
+            "<input type='hidden' id='replyNumber' value='" + replyNumber + "'>";
+
+        // document.getElementById("editBtn"+replyNumber).parentNode.innerHTML="";
+        document.getElementById("editBtn"+replyNumber).parentNode.innerHTML=
+            "<button class='btn btn-primary' id='editsubmit'>등록</button>"
+        +   "<button class='btn btn-danger' id='editcancel'>취소</button>"
+
+        $("#editsubmit").on("click" , function () {
+            var no = $("#boardNumber").val();
+            var newContent = $("#editReply").val();
+            console.log("게시글 번호 : " + no);
+            console.log("댓글 작성자 : " + editId);
+            console.log("댓글 내용 : " + newContent);
+            console.log("댓글 번호 : " + replyNumber);
+            $.ajax({
+                url : "/board/edit-reply",
+                data : {
+                    "no" : no,
+                    "content" : newContent,
+                    "replyNo" : replyNumber,
+                    "user_id" : editId
+                },
+                type : "post",
+                success : function (result) {
+                    console.log("댓글 수정 쏘기 성공");
+                    $("#editReply").val('');
+                    getReplyList();
+                },
+                error : function () {
+                    console.log("댓글 수정 ajax 요청 실패");
+                }
+            })
+        });
+
+        $("#editcancel").on("click" , function () {
+            document.getElementById("replyContent"+replyNumber).innerText="";
+            document.getElementById("replyContent"+replyNumber).innerText=editContent;
+
+            document.getElementById("editsubmit").parentNode.innerHTML=
+            "<button class='btn btn-primary' id='editBtn" + replyNumber + "' onclick='editReply(" + replyNumber + ")'>수정</button>"
+        +   "<button class='btn btn-danger' id='removeBtn" + replyNumber + "' onclick='removeReply(" + replyNumber + ")'>삭제</button>";
+        });
+    }
+
+
+
+
+    // 댓글 제거
+    function removeReply(replyNumber) {
+        var editId = document.getElementById("replyId"+replyNumber).innerText;
+        var no = $("#boardNumber").val();
+
+        console.log("게시글 번호 : " + no);
+        console.log("댓글 작성자 : " + editId);
+        console.log("댓글 번호 : " + replyNumber);
+        $.ajax({
+            url: "/board/remove-reply",
+            data: {
+                "no": no,
+                "replyNo": replyNumber,
+                "user_id": editId
+            },
+            type: "post",
+            success: function (result) {
+                if(result.pageInfoList.pageNum != null) {
+                    lastPage = result.pageInfoList.pageNum;
+                    console.log("삭제 후 마지막 페이지 : " + lastPage);
+                    if (lastPage != document.getElementById("currentPage").innerText) {
+                        document.getElementById("currentPage").innerText = lastPage;
+                    }
+                }
+
+
+                getReplyList();
+            },
+            error: function () {
+                console.log("댓글 삭제 ajax 요청 실패");
+            }
+        });
+    }
+
+    //대댓글 입력창 생성
+    function nestedReply(parentNo, parentLevel) {
+        var parentNo=parentNo;
+        var Level=parentLevel+1;
+
+        var parentDiv=document.getElementById("replyNo"+parentNo);
+        if(document.getElementById(parentNo + "_" + Level)) {
+            $(".nestedReply").remove();
+        }else {
+        $(".nestedReply").remove();
+        $(parentDiv).after("<div class='nestedReply' id='" + parentNo + "_" + Level + "'></div>");
+
+        var ntr=$("<tr class='w-100 d-flex flex-row'>");
+
+        var nLevel=$("<span style='margin-left: " + (parentLevel)*15 + "px'><i class='fa-solid fa-turn-down-right'></i></span>");
+        var nContent=$("<div class='flex-grow-1'><td><textarea class='form-control' id='nReplyContent' rows='1' style='resize:none; min-height: 100px'></textarea></td>");
+        var nParentNo=$("<input type='hidden' id='parentNumber' value='" + parentNo + "'>");
+        var nLevel=$("<input type='hidden' id='nReplyLevel' value='" + Level + "'>");
+        var nBtn= $("<td width='61'>")
+            .append("<button class='btn btn-primary' id='nReplySubmit' onclick='submitNreply()'>등록</button>");
+
+        ntr.append(nContent);
+        ntr.append(nParentNo);
+        ntr.append(nBtn);
+        ntr.prepend(nLevel);
+        $(".nestedReply").append(ntr);
+        }
+    }
+
+    // 대댓글 등록 ajax
+    function submitNreply() {
+        var no = $("#boardNumber").val();
+        var parentNo = $("#parentNumber") .val();
+        var nlevel = $("#nReplyLevel").val();
+        var nContent = $("#nReplyContent").val();
+        var user_id = $("#user_id").val();
+
+        $.ajax({
+            url : "/board/add-n-reply",
+            data : {
+                "content" : nContent,
+                "no" : no,
+                "user_id" : user_id,
+                "level" : nlevel,
+                "parentNo" : parentNo
+            },
+            type : "post",
+            success : function (result) {
+                $("#nestedReply").remove();
+
+                document.getElementById("currentPage").innerText=result.nestedReplyInfo.pageNum;
+                console.log("대댓글 페이지 : " + result.nestedReplyInfo.pageNum);
+                getReplyList();
+
+            },
+            error : function () {
+            }
+        });
+    }
+
+    function nextPage() {
+        document.getElementById("currentPage").innerText = document.getElementById("nPage").innerText;
+        console.log("현재 페이지 -> 다음 페이지로 바뀜");
+        getReplyList();
+    }
+
+    function prePage() {
+        document.getElementById("currentPage").innerText = document.getElementById("pPage").innerText;
+        console.log("현재 페이지 -> 이전 페이지로 바뀜");
+        getReplyList();
+    }
+
+    function pprePage() {
+        document.getElementById("currentPage").innerText = document.getElementById("ppPage").innerText;
+        console.log("현재 페이지 -> 이이전 페이지로 바뀜");
+        getReplyList();
+    }
+
+    function nnextPage() {
+        document.getElementById("currentPage").innerText = document.getElementById("nnPage").innerText;
+        console.log("현재 페이지 -> 다다음 페이지로 바뀜");
+        getReplyList();
+    }
+
+    function firstPage() {
+        document.getElementById("currentPage").innerText = 1;
+        console.log("맨 첫 페이지");
+        getReplyList();
+    }
+
+    function endPage() {
+        document.getElementById("currentPage").innerText = lastPage;
+        console.log("맨 마지막 페이지");
+        getReplyList();
+
+    }
+
+
+</script>
+</html>
+
