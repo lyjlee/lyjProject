@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Board {
+    private int row;
     private int No;
     private String title;
     private String description;
     private String user_id;
     private Timestamp submittedAt;
+    private int view;
 }

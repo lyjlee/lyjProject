@@ -45,13 +45,12 @@ public class AccountController {
         return view;
     }
 
-    //메인에서 옮긴애들
-
     @GetMapping("/account/sign-up")
     public String sign_up(Model model) {
         model.addAttribute(new SignUpForm());
         return "account/sign-up";
     }
+
 
     @PostMapping("/account/sign-up")
     public String post(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors, Model model) {
@@ -63,6 +62,9 @@ public class AccountController {
         model.addAttribute("account",account);
         return "redirect:/";
     }
+
+
+    //비밀번호 찾기 관련 핸들러
 
     @GetMapping("/account/find-password")
     public String find_password() {

@@ -52,6 +52,10 @@ public class BoardService {
         return boardMapper.removeBoard(no);
     }
 
+    public List<Board> searchBoard(String keyWord, int no) {
+        return boardMapper.searchBoardByKeyWord(keyWord, no);
+    }
+
     public List<Reply> searchBoardReply(int no, int page) {
         List<Reply> replyIndex = boardMapper.selectAllReply(no, page);
         return replyIndex;
@@ -117,5 +121,10 @@ public class BoardService {
             return page;
         }
         return 1;
+    }
+
+
+    public void boardViewCount(int no) {
+        boardMapper.viewCount(no);
     }
 }

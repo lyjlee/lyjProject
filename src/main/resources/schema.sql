@@ -35,7 +35,8 @@ CREATE TABLE Board
     board_title varchar(80),
     board_des text,
     user_name varchar(50),
-    board_submittedAt timestamp without time zone NOT NULL
+    board_submittedAt timestamp without time zone NOT NULL,
+    board_view int default 0
 );
 
 CREATE TABLE Reply

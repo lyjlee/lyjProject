@@ -21,7 +21,9 @@ public interface BoardMapper {
             @Result (property="title", column="board_title"),
             @Result (property="description", column="board_des"),
             @Result (property="user_id", column="user_name"),
-            @Result (property="submittedAt", column="board_submittedAt")
+            @Result (property="submittedAt", column="board_submittedAt"),
+            @Result (property="view", column="board_view")
+
     })
     List<Board> seletAllBoard(int no);
 
@@ -171,5 +173,22 @@ public interface BoardMapper {
     })
     Reply getNestedReply(int level, int parentNo, int no);
 
+
+    @Select("SELECT row_number() over (order by board_submittedAt) as row, board_no, board_title,board_des, user_name, board_submittedAt, board_view " +
+            "FROM Board as B WHERE B.board_title like '%${keyWord}%' OR B.board_des like '%${keyWord}%' ORDER BY row DESC " +
+            "offset (#{no}-1)*10 FETCH FIRST 10 ROWS ONLY")
+    @Results({
+            @Result(property="row", column="row"),
+            @Result(property="no", column="board_no"),
+            @Result (property="title", column="board_title"),
+            @Result (property="description", column="board_des"),
+            @Result (property="user_id", column="user_name"),
+            @Result (property="submittedAt", column="board_submittedAt"),
+            @Result (property="view", column="board_view")
+    })
+    List<Board> searchBoardByKeyWord(String keyWord, int no);
+
+    @Update("UPDATE Board SET board_view=board_view+1 WHERE board_no=#{no}")
+    void viewCount(int no);
 
 }

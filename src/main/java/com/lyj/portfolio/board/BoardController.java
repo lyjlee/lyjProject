@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -86,15 +87,80 @@ public class BoardController {
         return "redirect:/board-index?pageNo=1";
     }
 
+    @PostMapping("/searchBoard")
+    public String searchBoard(@CurrentAccount Account account,
+                              @RequestParam(value = "search") String keyWord,
+                              @RequestParam(value = "searchPageNo") int no,
+                              Model model) {
+        List<Board> boardList = boardService.searchBoard(keyWord,no);
+        int lastBoardNo = boardList.get(0).getRow();
+        if(lastBoardNo != 0) {
+            int page = lastBoardNo / 10;
+            int numberOfLastPageReply = lastBoardNo % 10;
+            if (numberOfLastPageReply != 0) {
+                page++;
+            }
+            model.addAttribute("lastPage",page);
+            model.addAttribute("pageNo",no);
+            model.addAttribute("boardList",boardList);
+        }else {
+            model.addAttribute("lastPage",0);
+        }
+
+        if(account != null) {
+            model.addAttribute(account);
+        }
+        model.addAttribute("search",keyWord);
+        return "board/search-result";
+    }
+
+    @GetMapping("/search-result")
+    String searchBoardIndex(@CurrentAccount Account account,
+                       @RequestParam(value = "keyword") String keyWord,
+                       @RequestParam(value = "No") int no,
+                       Model model) {
+        List<Board> boardList = boardService.searchBoard(keyWord,no);
+
+        List<Board> lastSearchingBoard = boardService.searchBoard(keyWord,1);
+        int lastBoardNo = lastSearchingBoard.get(0).getRow();
+        if(lastBoardNo != 0) {
+            int page = lastBoardNo / 10;
+            int numberOfLastPageReply = lastBoardNo % 10;
+            if (numberOfLastPageReply != 0) {
+                page++;
+            }
+            model.addAttribute("lastPage",page);
+            model.addAttribute("pageNo",no);
+            model.addAttribute("boardList",boardList);
+        }else {
+            model.addAttribute("lastPage",0);
+        }
+
+        if(account != null) {
+            model.addAttribute(account);
+        }
+        model.addAttribute("search",keyWord);
+
+        return "board/search-result";
+    }
+
+
+
+
     @GetMapping("/board-view")
     public String viewSelectedBoard(@CurrentAccount Account account, Model model,
                                     @RequestParam(value = "no") int no) {
+//        조회수 추가 쿼리는 미리 구현해 둠.
+//        boardService.boardViewCount(no);
+
+
         if(account != null) {
             model.addAttribute(account);
         }
         Board board = boardService.viewBoard(no);
         model.addAttribute(board);
         model.addAttribute("pageNo",1);
+
 
         Reply reply = boardMapper.selectDESCNewReply(no);
         if(reply != null) {
