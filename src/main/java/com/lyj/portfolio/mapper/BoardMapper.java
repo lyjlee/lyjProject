@@ -14,8 +14,8 @@ public interface BoardMapper {
             " VALUES(#{board.title}, #{board.description}, #{board.user_id},current_timestamp)")
     void submitNewBoard(@Param("board") Board board);
 
-//    게시글 목록 읽어오기
-    @Select("SELECT * FROM BOARD ORDER BY board_no DESC offset (#{no}-1)*10 FETCH FIRST 10 ROWS ONLY")
+// 새 페이징용 board 불러오기
+    @Select("SELECT * FROM BOARD ORDER BY board_no DESC")
     @Results(value = {
             @Result(property="no", column="board_no"),
             @Result (property="title", column="board_title"),
@@ -23,21 +23,37 @@ public interface BoardMapper {
             @Result (property="user_id", column="user_name"),
             @Result (property="submittedAt", column="board_submittedAt"),
             @Result (property="view", column="board_view")
-
     })
-    List<Board> seletAllBoard(int no);
+    List<Board> selectAllBoard();
 
-//
-    @Select("SELECT row_number() over () FROM BOARD ORDER BY board_no DESC limit 1")
-    int selectLastBoard();
+    @Select("SELECT board_no, board_title, board_des, user_name, board_submittedAt, board_view " +
+            "FROM Board as B WHERE B.board_title like '%${keyWord}%' OR B.board_des like '%${keyWord}%' ORDER BY board_no DESC")
+    @Results({
+            @Result(property="no", column="board_no"),
+            @Result (property="title", column="board_title"),
+            @Result (property="description", column="board_des"),
+            @Result (property="user_id", column="user_name"),
+            @Result (property="submittedAt", column="board_submittedAt"),
+            @Result (property="view", column="board_view")
+    })
+    List<Board> searchBoard(String keyWord);
+
+    @Update("UPDATE Board SET board_view=board_view+1 WHERE board_no=#{no}")
+    void viewCount(int no);
 
 
 
 
 
     //    게시글 내용 읽어오기 (게시글 번호로)
-    @Select("SELECT * from BOARD WHERE board_no = #{no}")
+    //@Select("SELECT * from BOARD WHERE board_no = #{no}")
+
+    //이전 페이지의 목록 추가 버전
+    @Select("SELECT row, board_no, board_title,board_des, user_name, board_submittedAt FROM " +
+            "(SELECT row_number() over (order by board_no DESC) as row, board_no, board_title,board_des, user_name, board_submittedAt " +
+            "FROM Board) as B WHERE B.board_no=#{no}")
     @Results({
+            @Result(property="row", column="row"),
             @Result(property="no", column="board_no"),
             @Result (property="title", column="board_title"),
             @Result (property="description", column="board_des"),
@@ -172,23 +188,4 @@ public interface BoardMapper {
             @Result (property="submittedAt", column="reply_submittedAt")
     })
     Reply getNestedReply(int level, int parentNo, int no);
-
-
-    @Select("SELECT row_number() over (order by board_submittedAt) as row, board_no, board_title,board_des, user_name, board_submittedAt, board_view " +
-            "FROM Board as B WHERE B.board_title like '%${keyWord}%' OR B.board_des like '%${keyWord}%' ORDER BY row DESC " +
-            "offset (#{no}-1)*10 FETCH FIRST 10 ROWS ONLY")
-    @Results({
-            @Result(property="row", column="row"),
-            @Result(property="no", column="board_no"),
-            @Result (property="title", column="board_title"),
-            @Result (property="description", column="board_des"),
-            @Result (property="user_id", column="user_name"),
-            @Result (property="submittedAt", column="board_submittedAt"),
-            @Result (property="view", column="board_view")
-    })
-    List<Board> searchBoardByKeyWord(String keyWord, int no);
-
-    @Update("UPDATE Board SET board_view=board_view+1 WHERE board_no=#{no}")
-    void viewCount(int no);
-
 }

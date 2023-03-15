@@ -1,5 +1,7 @@
 package com.lyj.portfolio.main;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Board;
@@ -10,8 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,19 +31,18 @@ public class MainController {
 
     @GetMapping("/board-index")
     public String goBoard(@CurrentAccount Account account, Model model,
-                          @RequestParam("pageNo") int no) throws Exception {
+                          @RequestParam(value = "pageNum") int pageNum) throws Exception {
         if(account != null) {
             model.addAttribute(account);
         }
-        List<Board> boardList = boardService.searchBoardindex(no);
-        model.addAttribute("boardList", boardList);
-
-        int lastPage = boardService.searchLastBoardPage();
-
-        model.addAttribute("pageNo", no);
-        model.addAttribute("lastPage", lastPage);
+        int page=pageNum;
+        PageHelper.startPage(page,10);
+        PageInfo<Board> pageInfo =
+                new PageInfo<>(boardService.selectAllBoard(),10);
+        model.addAttribute("boardList",pageInfo);
         return "board-index";
     }
+
 
     @GetMapping("/login")
     public String login() {

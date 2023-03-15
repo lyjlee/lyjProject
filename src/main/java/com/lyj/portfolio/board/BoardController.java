@@ -1,10 +1,12 @@
 package com.lyj.portfolio.board;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.gson.JsonObject;
 import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Board;
-import com.lyj.portfolio.VO.PageInfo;
+import com.lyj.portfolio.VO.ReplyPageInfo;
 import com.lyj.portfolio.VO.Reply;
 import com.lyj.portfolio.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +16,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -87,87 +90,81 @@ public class BoardController {
         return "redirect:/board-index?pageNo=1";
     }
 
-    @PostMapping("/searchBoard")
-    public String searchBoard(@CurrentAccount Account account,
-                              @RequestParam(value = "search") String keyWord,
-                              @RequestParam(value = "searchPageNo") int no,
-                              Model model) {
-        List<Board> boardList = boardService.searchBoard(keyWord,no);
-        int lastBoardNo = boardList.get(0).getRow();
-        if(lastBoardNo != 0) {
-            int page = lastBoardNo / 10;
-            int numberOfLastPageReply = lastBoardNo % 10;
-            if (numberOfLastPageReply != 0) {
-                page++;
-            }
-            model.addAttribute("lastPage",page);
-            model.addAttribute("pageNo",no);
-            model.addAttribute("boardList",boardList);
-        }else {
-            model.addAttribute("lastPage",0);
-        }
-
-        if(account != null) {
-            model.addAttribute(account);
-        }
-        model.addAttribute("search",keyWord);
-        return "board/search-result";
-    }
-
     @GetMapping("/search-result")
     String searchBoardIndex(@CurrentAccount Account account,
-                       @RequestParam(value = "keyword") String keyWord,
-                       @RequestParam(value = "No") int no,
-                       Model model) {
-        List<Board> boardList = boardService.searchBoard(keyWord,no);
-
-        List<Board> lastSearchingBoard = boardService.searchBoard(keyWord,1);
-        int lastBoardNo = lastSearchingBoard.get(0).getRow();
-        if(lastBoardNo != 0) {
-            int page = lastBoardNo / 10;
-            int numberOfLastPageReply = lastBoardNo % 10;
-            if (numberOfLastPageReply != 0) {
-                page++;
-            }
-            model.addAttribute("lastPage",page);
-            model.addAttribute("pageNo",no);
-            model.addAttribute("boardList",boardList);
-        }else {
-            model.addAttribute("lastPage",0);
-        }
+                            @RequestParam(value = "search") String keyWord,
+                            @RequestParam(value = "pageNum") int pageNum,
+                            Model model) {
+        int page=pageNum;
+        PageHelper.startPage(page,10);
+        PageInfo<Board> pageInfo =
+                new PageInfo<>(boardService.searchBoard(keyWord),10);
+        model.addAttribute("boardList",pageInfo);
 
         if(account != null) {
             model.addAttribute(account);
         }
         model.addAttribute("search",keyWord);
-
         return "board/search-result";
     }
-
-
 
 
     @GetMapping("/board-view")
     public String viewSelectedBoard(@CurrentAccount Account account, Model model,
-                                    @RequestParam(value = "no") int no) {
-//        조회수 추가 쿼리는 미리 구현해 둠.
-//        boardService.boardViewCount(no);
+                                    @RequestParam(value = "no") int no,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) {
+        //조회수+중복방지 구현
+        Cookie oldcookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for(Cookie cookie : cookies) {
+                if(cookie.getName().equals("boardHits")) {
+                    oldcookie = cookie;
+                }
+            }
+        }
+        if (oldcookie != null) {
+            if(!oldcookie.getValue().contains("["+no+"]")) {
+                boardService.boardViewCount(no);
+                oldcookie.setValue(oldcookie.getValue() + "["+no+"]");
+                oldcookie.setPath("/");
+                oldcookie.setMaxAge(60*60*2);
+                response.addCookie(oldcookie);
+            }
+        }else {
+            boardService.boardViewCount(no);
+            Cookie newCookie = new Cookie("boardHits","["+no+"]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60*60*2);
+            response.addCookie(newCookie);
+        }
 
 
         if(account != null) {
             model.addAttribute(account);
         }
         Board board = boardService.viewBoard(no);
+        int page = board.getRow()/10;
+        int remain = page%10;
+        if(page == 0) {
+            page++;
+        }else {
+            if(remain != 0) {
+                page++;
+            }
+        }
         model.addAttribute(board);
-        model.addAttribute("pageNo",1);
+        model.addAttribute("pageNum",page);
+        model.addAttribute("pageRNo",1);
 
 
         Reply reply = boardMapper.selectDESCNewReply(no);
         if(reply != null) {
-            PageInfo pageInfo = boardService.makePageInfo(reply);
-            model.addAttribute("lastPage", pageInfo.getPageNum());
+            ReplyPageInfo replyPageInfo = boardService.makePageInfo(reply);
+            model.addAttribute("lastRPage", replyPageInfo.getPageNum());
         }else {
-            model.addAttribute("lastPage", 0);
+            model.addAttribute("lastRPage", 0);
         }
 
         return "board/board-view";

@@ -2,7 +2,7 @@ package com.lyj.portfolio.board;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lyj.portfolio.VO.PageInfo;
+import com.lyj.portfolio.VO.ReplyPageInfo;
 import com.lyj.portfolio.VO.Reply;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,11 +27,11 @@ public class ReplyController {
                            @RequestParam("user_id") String user_id) {
 
         Reply replyDesc = boardService.createNewReply(content, no, user_id);
-        PageInfo pageInfo = boardService.makePageInfo(replyDesc);
+        ReplyPageInfo replyPageInfo = boardService.makePageInfo(replyDesc);
 
         Gson gson = new Gson();
         HashMap<String, Object> pageInfoList = new HashMap<String, Object>();
-        pageInfoList.put("pageInfoList",pageInfo);
+        pageInfoList.put("pageInfoList", replyPageInfo);
 
         return gson.toJson(pageInfoList);
     }
@@ -44,11 +44,11 @@ public class ReplyController {
                                  @RequestParam("level") int level,
                                  @RequestParam("parentNo") int parentNo) {
         Reply newNestedReply = boardService.createNewNestedReply(content, no, user_id, level, parentNo);
-        PageInfo pageInfo = boardService.makePageInfo(newNestedReply);
+        ReplyPageInfo replyPageInfo = boardService.makePageInfo(newNestedReply);
 
         Gson gson = new Gson();
         HashMap<String, Object> pageInfoList = new HashMap<String, Object>();
-        pageInfoList.put("nestedReplyInfo",pageInfo);
+        pageInfoList.put("nestedReplyInfo", replyPageInfo);
 
         return gson.toJson(pageInfoList);
     }
@@ -70,11 +70,11 @@ public class ReplyController {
                               @RequestParam("user_id") String user_id,
                               @RequestParam("replyNo") int replyNo) {
         Reply reply = boardService.removeReply(no, user_id, replyNo);
-        PageInfo pageInfo = boardService.makePageInfo(reply);
+        ReplyPageInfo replyPageInfo = boardService.makePageInfo(reply);
 
         Gson gson = new Gson();
         HashMap<String, Object> pageInfoList = new HashMap<String, Object>();
-        pageInfoList.put("pageInfoList",pageInfo);
+        pageInfoList.put("pageInfoList", replyPageInfo);
 
         return gson.toJson(pageInfoList);
     }

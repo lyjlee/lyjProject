@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Board {
     private int row;
-    private int No;
+    private int no;
     private String title;
     private String description;
     private String user_id;

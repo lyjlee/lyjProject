@@ -2,7 +2,7 @@ package com.lyj.portfolio.board;
 
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Board;
-import com.lyj.portfolio.VO.PageInfo;
+import com.lyj.portfolio.VO.ReplyPageInfo;
 import com.lyj.portfolio.VO.Reply;
 import com.lyj.portfolio.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +28,10 @@ public class BoardService {
         boardMapper.submitNewBoard(board);
     }
 
-    public List<Board> searchBoardindex(int no) throws Exception {
-        List<Board> boardindex = boardMapper.seletAllBoard(no);
-        return boardindex;
-    }
 
+    public List<Board> selectAllBoard() {
+        return boardMapper.selectAllBoard();
+    }
 
     public Board viewBoard(int no) {
         return boardMapper.findByNo(no);
@@ -52,8 +51,12 @@ public class BoardService {
         return boardMapper.removeBoard(no);
     }
 
-    public List<Board> searchBoard(String keyWord, int no) {
-        return boardMapper.searchBoardByKeyWord(keyWord, no);
+    public void boardViewCount(int no) {
+        boardMapper.viewCount(no);
+    }
+
+    public List<Board> searchBoard(String keyWord) {
+        return boardMapper.searchBoard(keyWord);
     }
 
     public List<Reply> searchBoardReply(int no, int page) {
@@ -65,6 +68,8 @@ public class BoardService {
         boardMapper.submitNewReply(content, no, user_id);
         return boardMapper.selectDESCNewReply(no);
     }
+
+    //답 댓글 생성
     public Reply createNewNestedReply(String content, int no, String user_id, int level, int parentNo) {
         boardMapper.submitNewNestedReply(content, no, user_id, level, parentNo);
         return boardMapper.getNestedReply(level, parentNo, no);
@@ -85,8 +90,8 @@ public class BoardService {
         return boardMapper.selectDESCNewReply(no);
     }
 
-
-    public PageInfo makePageInfo(Reply replyDesc) {
+//  댓글용 페이징처리 메소드
+    public ReplyPageInfo makePageInfo(Reply replyDesc) {
         if(replyDesc != null) {
             int newReplyRowNumber = replyDesc.getRow();
             int page = newReplyRowNumber / 10;
@@ -94,37 +99,16 @@ public class BoardService {
             if (numberOfLastPageReply != 0) {
                 page++;
             }
-            PageInfo pageInfo = new PageInfo();
-            pageInfo.setPageNum(page);
-            pageInfo.setNumberOfLastPageReply(numberOfLastPageReply);
+            ReplyPageInfo replyPageInfo = new ReplyPageInfo();
+            replyPageInfo.setPageNum(page);
+            replyPageInfo.setNumberOfLastPageReply(numberOfLastPageReply);
 
-            return pageInfo;
+            return replyPageInfo;
         }
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setPageNum(0);
-        pageInfo.setNumberOfLastPageReply(0);
+        ReplyPageInfo replyPageInfo = new ReplyPageInfo();
+        replyPageInfo.setPageNum(0);
+        replyPageInfo.setNumberOfLastPageReply(0);
 
-        return pageInfo;
-    }
-
-    public int searchLastBoardPage() {
-        int lastBoard = boardMapper.selectLastBoard();
-
-        if(lastBoard != 0) {
-            int lastBoardNo = lastBoard;
-            int page = lastBoardNo / 10;
-            int numberOfLastPageReply = lastBoardNo % 10;
-            if (numberOfLastPageReply != 0) {
-                page++;
-            }
-
-            return page;
-        }
-        return 1;
-    }
-
-
-    public void boardViewCount(int no) {
-        boardMapper.viewCount(no);
+        return replyPageInfo;
     }
 }

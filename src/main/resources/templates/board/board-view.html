@@ -81,12 +81,12 @@
                                         <span aria-hidden="true">&laquo;</span>
                                     </button>
                                 </li>
-                                <li class="page-item" style="display: none"><button class="page-link" id="ppPage" th:text="${pageNo}-2" onclick="pprePage()">이이전</button> </li>
-                                <li class="page-item"><button class="page-link" id="pPage" th:text="${pageNo}-1" onclick="prePage()">이전페이지</button> </li>
-                                <li class="page-item active"><button class="page-link" id="currentPage" th:text="${pageNo}">현재페이지</button> </li>
-                                <li class="page-item"><button class="page-link" id="nPage" th:text="${pageNo}+1" onclick="nextPage()">다음페이지</button> </li>
-                                <li class="page-item" style="display: none"><button class="page-link" id="nnPage" th:text="${pageNo}+2" onclick="nnextPage()">다다음페이지</button> </li>
-                                <input type="hidden" id="lastP" th:value="${lastPage}">
+                                <li class="page-item" style="display: none"><button class="page-link" id="ppPage" th:text="${pageRNo}-2" onclick="pprePage()">이이전</button> </li>
+                                <li class="page-item"><button class="page-link" id="pPage" th:text="${pageRNo}-1" onclick="prePage()">이전페이지</button> </li>
+                                <li class="page-item active"><button class="page-link" id="currentPage" th:text="${pageRNo}">현재페이지</button> </li>
+                                <li class="page-item"><button class="page-link" id="nPage" th:text="${pageRNo}+1" onclick="nextPage()">다음페이지</button> </li>
+                                <li class="page-item" style="display: none"><button class="page-link" id="nnPage" th:text="${pageRNo}+2" onclick="nnextPage()">다다음페이지</button> </li>
+                                <input type="hidden" id="lastP" th:value="${lastRPage}">
 
                                 <li class="page-item">
                                     <button class="page-link" id="nextPage" onclick="endPage()">
@@ -103,7 +103,9 @@
                             <div class="card-footer mt-1">
                                 <button class="btn btn-primary" id="replysubmit" style="float:right">등록</button>
                             </div>
-                        </div>
+                            <a class="btn btn-dark me-2"  style="float:right"
+                               th:href="@{/board-index( pageNum=${pageNum} )}">목록으로</a>
+                            </div>
                     </div>
                 </div>
             </div>

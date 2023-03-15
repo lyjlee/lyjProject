@@ -25,8 +25,7 @@ VALUES ('1번 글','반갑다 새로운 글이다1','lyj',current_timestamp),
        ('19번 글','반갑다 새로운 글이다3','kcs',current_timestamp),
        ('20번 글','반갑다 새로운 글이다3','kcs',current_timestamp),
        ('21번 글','반갑다 새로운 글이다3','kcs',current_timestamp),
-
-       ('15번 글','반갑다 새로운 글이다4','kys',current_timestamp);
+       ('22번 글','반갑다 새로운 글이다4','kys',current_timestamp);
 
 INSERT INTO reply (board_no, user_name, reply_content, reply_submittedAt)
 VALUES ('1','홍길동','반갑다 새로운 댓글이다1',current_timestamp),
