@@ -117,7 +117,8 @@
 <script src="/node_modules/summernote/dist/lang/summernote-ko-KR.js"></script>
 <script th:replace="fragments.html :: ajax-csrf-header"></script>
 
-<script type="application/javascript">
+<script type="application/javascript" th:inline="javascript">
+    var account = /*[[${account}]]*/ null;
     var lastPage = null;
 
     $(document).ready(function() {
@@ -142,6 +143,11 @@
         getReplyList();
 
         $("#replysubmit").on("click" , function () {
+
+            if(account==null) {
+                $("#replyContent").val("").attr("placeholder","로그인 후 이용해주세요.");
+            }else {
+
             var replyContent = $("#replyContent").val();
             var no = $("#boardNumber").val();
             var user_id = $("#user_id").val();
@@ -175,7 +181,8 @@
                 error : function () {
                     console.log("댓글 등록 ajax 요청 실패");
                 }
-            })
+            });
+            }
         });
 
         if(document.getElementById("pPage").innerText = 1) {
@@ -340,7 +347,6 @@
         document.getElementById("replyContent"+replyNumber).innerHTML+=
             "<input type='hidden' id='replyNumber' value='" + replyNumber + "'>";
 
-        // document.getElementById("editBtn"+replyNumber).parentNode.innerHTML="";
         document.getElementById("editBtn"+replyNumber).parentNode.innerHTML=
             "<button class='btn btn-primary' id='editsubmit'>등록</button>"
         +   "<button class='btn btn-danger' id='editcancel'>취소</button>"
@@ -456,6 +462,10 @@
         var nContent = $("#nReplyContent").val();
         var user_id = $("#user_id").val();
 
+        if(account==null) {
+            $("#nReplyContent").val("").attr("placeholder","로그인 후 이용해주세요.");
+        }else {
+
         $.ajax({
             url : "/board/add-n-reply",
             data : {
@@ -476,7 +486,8 @@
             },
             error : function () {
             }
-        });
+        }); }
+
     }
 
     function nextPage() {
