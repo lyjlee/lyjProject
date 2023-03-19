@@ -1,5 +1,6 @@
 package com.lyj.portfolio.account;
 
+import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.mapper.AccountMapper;
 import com.lyj.portfolio.validator.SignUpFormValidator;
@@ -62,6 +63,27 @@ public class AccountController {
         model.addAttribute("account",account);
         return "redirect:/";
     }
+
+    @GetMapping("/resend-email")
+    public String reSendEmailToken(@CurrentAccount Account account, Model model) {
+        return "account/resend-email";
+    }
+
+
+    @PostMapping("/account/resend-email")
+    public String reSendEmailsubmit(@Valid @RequestParam(value ="email") String email, Model model) {
+        Account account = accountMapper.findByEmail(email);
+        if(account == null) {
+            model.addAttribute("error","wrong");
+            return "account/resend-email";
+        }
+
+        account.generatedEmailCheckToken();
+        accountMapper.insertEmailCheckToken(account);
+        accountService.sendMailToken(account);
+
+        model.addAttribute("message","Mail");
+        return "account/done";    }
 
 
     //비밀번호 찾기 관련 핸들러

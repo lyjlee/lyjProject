@@ -17,7 +17,7 @@ create table Account
     user_email varchar(50),
     user_emailVerified boolean DEFAULT FALSE,
     user_emailCheckToken varchar(80) DEFAULT NULL,
-    user_joinedAt DATE DEFAULT NULL,
+    user_joinedAt timestamp without time zone DEFAULT NULL,
     user_findPasswordToken varchar(80) DEFAULT NULL
 );
 
