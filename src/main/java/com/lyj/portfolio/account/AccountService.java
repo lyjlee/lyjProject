@@ -52,6 +52,7 @@ public class AccountService implements UserDetailsService {
     public void sendMailToken(Account newAccount) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setSubject("회원 가입 인증");
+        mailMessage.setTo(newAccount.getEmail());
         mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken()
                 + "&email=" + newAccount.getEmail());
         javaMailSender.send(mailMessage);
@@ -60,6 +61,7 @@ public class AccountService implements UserDetailsService {
     public void sendMailFindPassword(Account account) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setSubject("비밀번호 찾기 인증");
+        mailMessage.setTo(account.getEmail());
         mailMessage.setText("/check-find-password?token=" + account.getFindPasswordToken()
                 + "&email=" + account.getEmail());
         javaMailSender.send(mailMessage);

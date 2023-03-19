@@ -174,11 +174,11 @@ public class BoardController {
     public String uploadSummernoteImageFile(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request )  {
         JsonObject jsonObject = new JsonObject();
 
-        String fileRoot = "D:\\summernote_image\\"; // 외부경로로 저장
+        String fileRoot = "C:\\summernote_image\\"; // 외부경로로 저장
 
         // 내부경로로 저장
         String contextRoot = new HttpServletRequestWrapper(request).getRealPath("/");
-        // String fileRoot = contextRoot+"resources/fileupload/";
+//        String fileRoot = contextRoot+"resources/static/images/";
 
         String originalFileName = multipartFile.getOriginalFilename();	//오리지날 파일명
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));	//파일 확장자

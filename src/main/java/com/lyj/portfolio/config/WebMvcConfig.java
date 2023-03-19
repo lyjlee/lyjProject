@@ -11,8 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //외부
         registry.addResourceHandler("/summernoteImage/**")
-                .addResourceLocations("file:///D:/summernote_image/");
+                .addResourceLocations("file:///C:/summernote_image/");
     }
 
     //추가 안해도 해결
