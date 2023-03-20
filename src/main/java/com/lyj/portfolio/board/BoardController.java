@@ -43,7 +43,7 @@ public class BoardController {
     @PostMapping("/new-board")
     public String newBoardSubmit(@CurrentAccount Account account, @Valid BoardForm boardForm) {
         boardService.createNewBoard(boardForm, account);
-        return "redirect:/board-index?pageNo=1";
+        return "redirect:/board-index?pageNum=1";
     }
 
     @GetMapping("/mod-board")
@@ -86,7 +86,7 @@ public class BoardController {
             }
         model.addAttribute(account);
         boardService.removeBoard(no);
-        return "redirect:/board-index?pageNo=1";
+        return "redirect:/board-index?pageNum=1";
     }
 
     @GetMapping("/search-result")
