@@ -28,7 +28,7 @@
         <div class="collapse navbar-collapse col-10">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link">영화 한 줄평</a>
+                    <a class="nav-link" th:href="@{/movie-index}">영화 한 줄평</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/board-index?pageNum=1}">영화 이야기</a>
@@ -49,9 +49,6 @@
                 </li>
 
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-<!--                    <form action="#" th:action="@{/logout}" method="post">-->
-<!--                        <button type="submit">로그아웃</button>-->
-<!--                    </form>-->
                     <a class="nav-link" href="#" onclick="logout_submit()"><i class="fa fa-sign-out" aria-hidden="true"></i>
                         로그아웃</a>
                     <form id="logoutform" action="#" th:action="@{/logout}" method="post">

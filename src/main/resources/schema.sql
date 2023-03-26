@@ -5,7 +5,8 @@ drop table if exists Account;
 drop table if exists Board;
 drop table if exists persistent_logins;
 drop table if exists Reply;
-
+drop table if exists movie_db;
+drop table if exists movie_eval;
 
 
 create table Account
@@ -48,5 +49,21 @@ CREATE TABLE Reply
     user_name varchar(50),
     reply_content varchar(64),
     reply_submittedAt timestamp without time zone NOT NULL
+);
+
+CREATE TABLE movie_db
+(
+    movie_subject varchar(64) NOT NULL,
+    movie_img varchar(64) DEFAULT NULL,
+    movie_genre varchar(64) NOT NULL
+);
+
+CREATE TABLE movie_eval
+(
+    movie_subject varchar(64) NOT NULL,
+    movie_score int NOT NULL,
+    movie_comment varchar(64) NOT NULL,
+    movie_user_id  varchar(64) NOT NULL,
+    comment_submittedAt timestamp without time zone NOT NULL
 );
 

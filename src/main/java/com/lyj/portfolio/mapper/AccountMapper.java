@@ -7,17 +7,17 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface AccountMapper{
 
-    @Select("SELECT EXISTS (SELECT 1 FROM account WHERE user_id = #{signUpForm.user_id})")
+    @Select("SELECT EXISTS (SELECT 1 FROM mydb.account WHERE user_id = #{signUpForm.user_id})")
     boolean existsUserId(@Param("signUpForm") SignUpForm signUpForm);
 
-    @Insert("INSERT INTO account(user_id, user_password, user_name, user_email)" +
+    @Insert("INSERT INTO mydb.account(user_id, user_password, user_name, user_email)" +
             " VALUES(#{account.user_id}, #{account.password}, #{account.name}, #{account.email})")
     void save(@Param("account") Account account);
 
-    @Insert("UPDATE account SET user_emailCheckToken=#{account.emailCheckToken} WHERE user_email = #{account.email}")
+    @Insert("UPDATE mydb.account SET user_emailCheckToken=#{account.emailCheckToken} WHERE user_email = #{account.email}")
     void insertEmailCheckToken(@Param("account") Account account);
 
-    @Select("SELECT * from account WHERE user_email = #{email}")
+    @Select("SELECT * from mydb.account WHERE user_email = #{email}")
 //    @ResultType(Account.class) 안써도 됨.
     @Results({
             @Result (property="user_id", column="user_id"),
@@ -31,10 +31,10 @@ public interface AccountMapper{
     })
     Account findByEmail(String email);
 
-    @Update("UPDATE account SET user_joinedAt=#{account.joinedAt}, user_emailVerified=#{account.emailVerified} WHERE user_email=#{account.email}")
+    @Update("UPDATE mydb.account SET user_joinedAt=#{account.joinedAt}, user_emailVerified=#{account.emailVerified} WHERE user_email=#{account.email}")
     void verifiedAccount(@Param("account") Account account);
 
-    @Select("SELECT * from account WHERE user_id = #{username}")
+    @Select("SELECT * from mydb.account WHERE user_id = #{username}")
     @Results({
             @Result (property="user_id", column="user_id"),
             @Result (property="password", column="user_password"),
@@ -47,9 +47,9 @@ public interface AccountMapper{
     })
     Account findByUserId(String username);
 
-    @Insert("UPDATE account SET user_findPasswordToken=#{account.findPasswordToken} WHERE user_email = #{account.email}")
+    @Insert("UPDATE mydb.account SET user_findPasswordToken=#{account.findPasswordToken} WHERE user_email = #{account.email}")
     void insertFindPasswordToken(@Param("account") Account account);
 
-    @Insert("UPDATE account SET user_password=#{password}, user_findPasswordToken=null WHERE user_email = #{email}")
+    @Insert("UPDATE mydb.account SET user_password=#{password}, user_findPasswordToken=null WHERE user_email = #{email}")
     void updatePassword(String password, String email);
 }

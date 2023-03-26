@@ -53,8 +53,8 @@ public class AccountService implements UserDetailsService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setSubject("회원 가입 인증");
         mailMessage.setTo(newAccount.getEmail());
-        mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken()
-                + "&email=" + newAccount.getEmail());
+        mailMessage.setText("http://lyjproject.p-e.kr/check-email-token?token=" + newAccount.getEmailCheckToken()
+                + "&email=" + newAccount.getEmail() + " <- 주소를 입력하여 인증을 진행해주세요.");
         javaMailSender.send(mailMessage);
     }
 
@@ -62,8 +62,8 @@ public class AccountService implements UserDetailsService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setSubject("비밀번호 찾기 인증");
         mailMessage.setTo(account.getEmail());
-        mailMessage.setText("/check-find-password?token=" + account.getFindPasswordToken()
-                + "&email=" + account.getEmail());
+        mailMessage.setText("http://lyjproject.p-e.kr/check-find-password?token=" + account.getFindPasswordToken()
+                + "&email=" + account.getEmail() + " <- 주소를 입력하여 인증을 진행해주세요.");
         javaMailSender.send(mailMessage);
     }
 

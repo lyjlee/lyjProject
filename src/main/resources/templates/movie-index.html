@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments::head">
+</head>
+<body class="bg-light">
+<div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+  이메일 인증이 완료되지 않았습니다.
+  <a href="#" th:href="@{/resend-email}" class="alert-link">이메일 인증 재전송하기</a>
+</div>
+<div th:replace="fragments::main-nav"></div>
+    <div class="container py-5">
+      <div th:replace="fragments::wrong-request"></div>
+      <div class="row justify-content-center">
+        <div class="col-sm-10 d-flex">
+            <div class="card me-5" th:if="${#lists.size(movies)}  > 0"
+                   th:each="list : ${movies}"
+                   th:onclick="|location.href='@{/movie-view( subject=${list.subject} )}'|"
+                 style="width: 25rem; height: 20rem;"
+                   >
+                <img class="card-img" th:src="${list.img}">
+                <div class="card-body text-center rounded-2" style="background-color: #cccccc">
+                    <h5 class="card-title text-uppercase" th:text="${list.subject}">제목</h5>
+                    <p class="card-text text-capitalize" th:text="${list.genre}">장르</p>
+                    <p class="card-text"> ★ <span th:text="${list.avg_score}">평균별점</span> </p>
+                </div>
+            </div>
+        </div>
+          <div class="row justify-content-center">
+
+
+          </div>
+      </div>
+  </div>
+</body>
+<script th:replace="fragments::logout"></script>
+<script type="application/javascript">
+  $(document).ready(function () {
+
+  });
+</script>
+</html>
