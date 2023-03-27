@@ -1,10 +1,7 @@
 package com.lyj.portfolio.mapper;
 
 import com.lyj.portfolio.VO.Movie;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -43,13 +40,24 @@ public interface MovieMapper {
     })
     Movie selectMovies(String subject);
 
-    @Select("SELECT * from mydb.movie_eval WHERE movie_subject=#{subject} AND movie_user_id=#{userId}")
+    @Select("SELECT * from mydb.movie_eval WHERE movie_subject=#{subject} AND movie_user_id=#{user_id}")
     @Results({
             @Result(property="score", column="movie_score"),
             @Result (property="comment", column="movie_comment"),
             @Result (property="user_id", column="movie_user_id"),
             @Result (property="submittedAt", column="comment_submittedat")
     })
-    Movie getyMyComment(String userId, String subject);
+    Movie getyMyComment(String user_id, String subject);
 
+    @Update("UPDATE mydb.movie_eval SET movie_comment=#{movie.comment}, " +
+            "movie_score=#{movie.score},comment_submittedat=current_timestamp " +
+            "WHERE movie_subject=#{movie.subject} and movie_user_id=#{movie.user_id}")
+    void editComment(@Param("movie") Movie movie);
+
+    @Delete("DELETE FROM mydb.movie_eval WHERE movie_subject=#{subject} and movie_user_id=#{user_id}")
+    void removeComment(String subject, String user_id);
+
+    @Insert("INSERT INTO mydb.movie_eval(movie_subject, movie_score, movie_comment, movie_user_id, comment_submittedAt)" +
+            " VALUES(#{movie.subject}, #{movie.score}, #{movie.comment},#{movie.user_id},current_timestamp)")
+    void addComment(@Param("movie") Movie movie);
 }

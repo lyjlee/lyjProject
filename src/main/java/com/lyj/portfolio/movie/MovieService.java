@@ -31,4 +31,16 @@ public class MovieService {
     public Movie getMyComment(String userId, String subject) {
         return movieMapper.getyMyComment(userId, subject);
     }
+
+    public void editComment(Movie movie) {
+        movieMapper.editComment(movie);
+    }
+
+    public void removeComment(String subject, String userId) {
+        movieMapper.removeComment(subject,userId);
+    }
+
+    public void addComment(Movie movie) {
+        movieMapper.addComment(movie);
+    }
 }

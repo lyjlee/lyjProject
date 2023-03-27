@@ -23,7 +23,7 @@
                 <div class="card-body text-center rounded-2" style="background-color: #cccccc">
                     <h5 class="card-title text-uppercase" th:text="${list.subject}">제목</h5>
                     <p class="card-text text-capitalize" th:text="${list.genre}">장르</p>
-                    <p class="card-text"> ★ <span th:text="${list.avg_score}">평균별점</span> </p>
+                    <p class="card-text"> <span class="avg_score">★</span> <span th:text="${list.avg_score}">평균별점</span> </p>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
 <script th:replace="fragments::logout"></script>
 <script type="application/javascript">
   $(document).ready(function () {
-
+    $(".avg_score").css("color","#F9D548");
   });
 </script>
 </html>

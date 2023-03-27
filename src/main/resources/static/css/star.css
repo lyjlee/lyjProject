@@ -1,0 +1,28 @@
+#scoreForm fieldset{
+    display: inline-block;
+    direction: rtl;
+    border: 0;
+    text-align: left;
+
+}
+#scoreForm legend{
+    font-size: medium;
+    text-align: left;
+}
+#scoreForm input[type=radio]{
+    display: none;
+}
+#scoreForm label{
+    font-size: 1.5em;
+    color: transparent;
+    text-shadow: 0 0 0 #d0d0d0;
+}
+#scoreForm label:hover{
+    text-shadow: 0 0 0 #F9D548;
+}
+#scoreForm label:hover ~ label{
+    text-shadow: 0 0 0 #F9D548;
+}
+#scoreForm input[type=radio]:checked ~ label{
+    text-shadow: 0 0 0 #F9D548;
+}
