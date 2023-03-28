@@ -57,10 +57,4 @@ public class MainController {
         model.addAttribute("movies",movies);
         return "movie-index";
     }
-
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
 }

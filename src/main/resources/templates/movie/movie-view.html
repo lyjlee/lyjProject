@@ -5,9 +5,9 @@
 <head th:replace="fragments::head">
 </head>
 <body class="bg-light">
-<div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+<div class="alert alert-warning" role="alert" th:if="${!#strings.isEmpty(account.user_id) && !account.emailVerified}">
     이메일 인증이 완료되지 않았습니다.
-    <a href="#" th:href="@{/resend-email}" class="alert-link">이메일 인증 재전송하기</a>
+    <a href="#" th:href="@{/account/resend-email}" class="alert-link">이메일 인증 재전송하기</a>
 </div>
 <div th:replace="fragments::main-nav"></div>
 <div class="container py-5">
@@ -65,7 +65,7 @@
 
             <div class="justify-content-center mt-2" th:if="${myComment.user_id == null && !#strings.isEmpty(account.user_id)}">
                 <div class="p-3 mt-2 rounded-4" id="commentForm" style="background-color: #666699">
-                    <form  th:object="${commentForm}" class="form-control needs-validation" id="scoreForm" method="post" th:action="@{/add-Comment}" novalidate>
+                    <form  th:object="${commentForm}" class="form-control needs-validation" id="scoreForm" method="post" th:action="@{/add-comment}" novalidate>
                         <div class="form-group">
                             <input type="hidden" th:field="*{user_id}">
                             <input type="hidden" th:field="*{subject}">

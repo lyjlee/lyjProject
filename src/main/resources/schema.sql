@@ -35,7 +35,7 @@ CREATE TABLE Board
     board_no serial NOT NULL,
     board_title varchar(80),
     board_des text,
-    user_name varchar(50),
+    user_id varchar(50),
     board_submittedAt timestamp without time zone NOT NULL,
     board_view int default 0
 );
@@ -46,7 +46,7 @@ CREATE TABLE Reply
     reply_level int default 1,
     reply_parent_no int default 0,
     board_no int,
-    user_name varchar(50),
+    user_id varchar(50),
     reply_content varchar(64),
     reply_submittedAt timestamp without time zone NOT NULL
 );

@@ -84,7 +84,7 @@ public class MovieController {
         return gson.toJson(message);
     }
 
-    @PostMapping("/add-Comment")
+    @PostMapping("/add-comment")
     public String addComment(@CurrentAccount Account account, @Valid Movie movie,
                              HttpServletResponse response, Model model) throws IOException {
         response.setContentType("text/html; charset=UTF-8");

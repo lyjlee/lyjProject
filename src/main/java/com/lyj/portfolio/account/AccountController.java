@@ -46,6 +46,11 @@ public class AccountController {
         return view;
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping("/account/sign-up")
     public String sign_up(Model model) {
         model.addAttribute(new SignUpForm());
@@ -64,7 +69,7 @@ public class AccountController {
         return "redirect:/";
     }
 
-    @GetMapping("/resend-email")
+    @GetMapping("/account/resend-email")
     public String reSendEmailToken(@CurrentAccount Account account, Model model) {
         return "account/resend-email";
     }
