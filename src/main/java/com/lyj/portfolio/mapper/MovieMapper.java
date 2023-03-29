@@ -60,4 +60,17 @@ public interface MovieMapper {
     @Insert("INSERT INTO mydb.movie_eval(movie_subject, movie_score, movie_comment, movie_user_id, comment_submittedAt)" +
             " VALUES(#{movie.subject}, #{movie.score}, #{movie.comment},#{movie.user_id},current_timestamp)")
     void addComment(@Param("movie") Movie movie);
+
+    @Select("SELECT D.movie_subject, D.movie_img, D.movie_genre, E.movie_score, E.movie_comment, E.movie_user_id, E.comment_submittedAt " +
+            "FROM mydb.movie_db D INNER JOIN mydb.movie_eval E ON D.movie_subject = E.movie_subject and E.movie_user_id=#{userId}")
+    @Results({
+            @Result(property="subject", column="movie_subject"),
+            @Result (property="img", column="movie_img"),
+            @Result (property="genre", column="movie_genre"),
+            @Result(property="score", column="movie_score"),
+            @Result (property="comment", column="movie_comment"),
+            @Result (property="user_id", column="movie_user_id"),
+            @Result (property="submittedAt", column="comment_submittedat")
+    })
+    List<Movie> getMyComment(String userId);
 }

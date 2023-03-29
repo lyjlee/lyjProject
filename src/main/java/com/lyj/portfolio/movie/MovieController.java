@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Movie;
-import com.lyj.portfolio.board.BoardForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

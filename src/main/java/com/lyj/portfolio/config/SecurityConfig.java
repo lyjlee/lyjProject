@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/account/find-password", "/account/change-password", "/searchBoard",
                         "/board/search-result", "/search-result",
                         "/pageTest", "/account/resend-email",
-                        "/movie-index", "/movie-view","/edit-comment","/add-Comment"
+                        "/movie-index", "/movie-view","/edit-comment","/add-Comment",
+                        "/profile-myPage"
                         ).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
                 .anyRequest().authenticated();

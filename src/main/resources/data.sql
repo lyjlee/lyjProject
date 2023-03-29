@@ -60,7 +60,7 @@ VALUES ('inception', '/images/poster1.jpg', 'sf'),
 INSERT INTO mydb.movie_eval (movie_subject, movie_score, movie_comment, movie_user_id, comment_submittedAt)
 VALUES ('inception', 3, '좋아요', 'lyj6752',current_timestamp),
        ('inception', 1, '별로예요', 'asd4a8s',current_timestamp),
-       ('dark knight', 4, '재밌어요', 'd156a',current_timestamp),
+       ('dark knight', 4, '재밌어요', 'lyj6752',current_timestamp),
        ('dark knight', 5, '최고예요', 'as48as',current_timestamp),
        ('memento', 3, '그냥그래요', 'ads1asd2',current_timestamp),
        ('memento', 2, '난해해요', 'sd8sad8',current_timestamp);
