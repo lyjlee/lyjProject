@@ -25,3 +25,6 @@
   -----
   
   #### :link: http://lyjproject.p-e.kr/
+  #### :link: Notion : https://coherent-sky-eba.notion.site/760e86613fbd473494f12ae1d306fd59
+
+
