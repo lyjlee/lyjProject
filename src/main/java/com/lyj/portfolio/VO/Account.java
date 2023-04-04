@@ -1,5 +1,6 @@
 package com.lyj.portfolio.VO;
 
+import com.lyj.portfolio.Oauth2.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,9 @@ public class Account {
     private boolean emailVerified;
     private String emailCheckToken;
     private LocalDateTime joinedAt;
-
     private String findPasswordToken;
+    private Role role = Role.USER;
+
 
     public void generatedEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
@@ -34,5 +36,15 @@ public class Account {
 
     public boolean isValidPasswordToken(String token) {
         return this.findPasswordToken.equals(token);
+    }
+
+    public Account update(String user_id) {
+        this.user_id = user_id;
+        this.name = "new_User";
+        return this;
+    }
+
+    public String getRoleValue() {
+        return this.role.getValue();
     }
 }

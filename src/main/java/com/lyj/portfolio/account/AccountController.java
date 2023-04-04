@@ -60,7 +60,7 @@ public class AccountController {
 
     @PostMapping("/account/sign-up")
     public String post(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors, Model model) {
-        if(errors.hasFieldErrors("user_id")) {
+        if(errors.hasFieldErrors("user_id") || errors.hasFieldErrors("email")) {
             return "account/sign-up";
         }
         Account account = accountService.processNewAccount(signUpForm);

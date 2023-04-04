@@ -1,7 +1,7 @@
 set timezone = 'Asia/Seoul';
 
-INSERT INTO mydb.account (user_id, user_password, user_name, user_email)
-VALUES ('lyj6752', '123123123', 'youngjae', 'lyj6752@naver.com');
+-- INSERT INTO mydb.account (user_id, user_password, user_name, user_email)
+-- VALUES ('lyj6752', '123123123', 'youngjae', 'lyj6752@naver.com');
 
 INSERT INTO mydb.board (board_title, board_des, user_id, board_submittedAt)
 VALUES ('1번 글','반갑다 새로운 글이다1','lyj',current_timestamp),

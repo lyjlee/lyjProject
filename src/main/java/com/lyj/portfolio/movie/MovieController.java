@@ -93,7 +93,6 @@ public class MovieController {
         movieService.addComment(movie);
 
         PrintWriter out = response.getWriter();
-        // 등록 후 리다이렉트 수정 요망.
         out.println("<script>alert('한줄평이 등록 되었습니다'); location.href='redirect:/movie-view?subject="
                 + movie.getSubject() +"';</script>");
         out.flush();

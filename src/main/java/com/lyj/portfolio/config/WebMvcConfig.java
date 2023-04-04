@@ -17,13 +17,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     //추가 안해도 해결
-    @Bean
-    public FilterRegistrationBean filterBean() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new MyFilter());
-        registrationBean.setOrder(Integer.MIN_VALUE);
-        registrationBean.addUrlPatterns("/*");
-
-        return registrationBean;
-    }
+//    @Bean
+//    public FilterRegistrationBean filterBean() {
+//        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new MyFilter());
+//        registrationBean.setOrder(Integer.MIN_VALUE);
+//        registrationBean.addUrlPatterns("/*");
+//
+//        return registrationBean;
+//    }
 
 }

@@ -102,4 +102,14 @@ public class AccountService implements UserDetailsService {
         String encode = passwordEncoder.encode(signUpForm.getPassword());
         accountMapper.updatePassword(encode, email);
     }
+
+    public Account updateAccount(SignUpForm signUpForm, String user_id) {
+        accountMapper.updateAccount(signUpForm, user_id);
+        return accountMapper.findByUserId(user_id);
+    }
+
+    public boolean checkPassword(String password, String user_id) {
+        Account account = accountMapper.findByUserId(user_id);
+        return passwordEncoder.matches(password,account.getPassword());
+    }
 }

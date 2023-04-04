@@ -43,6 +43,7 @@
                 <div class="form-group mb-3">
                     <button class="btn btn-success btn-block" type="submit"
                             aria-describedby="submitHelp">로그인</button>
+                    <a sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/google}" class="btn btn-secondary active" role="button">Google Login</a>
                     <small id="submitHelp" class="form-text text-muted">
                         아직 회원이 아니라면 <a href="#" th:href="@{/account/sign-up}">회원가입하러 가기</a>
                     </small>

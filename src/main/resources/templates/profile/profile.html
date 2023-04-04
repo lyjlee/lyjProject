@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments::head">
+</head>
+<body class="bg-light">
+    <div class="alert alert-warning" role="alert" th:if="${!#strings.isEmpty(account.user_id) && !account.emailVerified}">
+        이메일 인증이 완료되지 않았습니다.
+        <a href="#" th:href="@{/account/resend-email}" class="alert-link">이메일 인증 재전송하기</a>
+    </div>
+    <div th:replace="fragments::main-nav"></div>
+    <div class="container py-5">
+        <div class="py-5 text-center">
+            <h2>회원 정보</h2>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-1">
+                <div th:replace="fragments::profile-menu(currentMenu='setting')"></div>
+            </div>
+            <form class="col-sm-6 d-block" method="post">
+                <div class="form-group mb-3">
+                    <label for="user_id">아이디</label>
+                    <input id="user_id" type="text" name="user_id" th:value="${updatedAccount.user_id}" class="form-control" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="name">이름</label>
+                    <input id="name" type="text" name="name" th:value="${updatedAccount.name}" class="form-control" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="email">이메일</label>
+                    <input id="email" type="email" name="email" th:value="${updatedAccount.email}" class="form-control" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="joinedAt">가입일</label>
+                    <input th:if="${!#strings.isEmpty(updatedAccount.joinedAt)}" id="joinedAt" type="email" name="email" th:value="${account.joinedAt}" class="form-control" readonly>
+                    <p th:if="${#strings.isEmpty(updatedAccount.joinedAt)}" class="form-control text-danger">이메일 인증을 완료해주세요</p>
+                </div>
+
+                <div class="form-group">
+                    <a class="btn btn-primary btn-block " th:href="@{/passCheck}">
+                        회원정보 수정
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

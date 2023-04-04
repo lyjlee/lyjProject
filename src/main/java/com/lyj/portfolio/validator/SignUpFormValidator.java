@@ -25,5 +25,10 @@ public class SignUpFormValidator implements Validator {
                     new Object[]{signUpForm.getUser_id()},
                     "이미 사용중인 아이디입니다.");
         }
+        if(accountMapper.existsEmail(signUpForm)){
+            errors.rejectValue("email" , "invalid.email",
+                    new Object[]{signUpForm.getEmail()},
+                    "이미 사용중인 이메일입니다.");
+        }
     }
 }

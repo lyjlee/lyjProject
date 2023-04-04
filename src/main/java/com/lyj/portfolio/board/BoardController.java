@@ -142,6 +142,8 @@ public class BoardController {
 
         if(account != null) {
             model.addAttribute(account);
+        }else {
+            model.addAttribute("account", new Account());
         }
         Board board = boardService.viewBoard(no);
         int page = board.getRow()/10;

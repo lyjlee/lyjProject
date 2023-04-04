@@ -10,11 +10,18 @@ public interface AccountMapper{
     @Select("SELECT EXISTS (SELECT 1 FROM mydb.account WHERE user_id = #{signUpForm.user_id})")
     boolean existsUserId(@Param("signUpForm") SignUpForm signUpForm);
 
+    @Select("SELECT EXISTS (SELECT 1 FROM mydb.account WHERE user_email = #{signUpForm.email})")
+    boolean existsEmail(@Param("signUpForm") SignUpForm signUpForm);
+
     @Insert("INSERT INTO mydb.account(user_id, user_password, user_name, user_email)" +
             " VALUES(#{account.user_id}, #{account.password}, #{account.name}, #{account.email})")
     void save(@Param("account") Account account);
 
-    @Insert("UPDATE mydb.account SET user_emailCheckToken=#{account.emailCheckToken} WHERE user_email = #{account.email}")
+    @Insert("INSERT INTO mydb.account(user_id, user_name, user_email)" +
+            " VALUES(#{account.user_id}, #{account.name}, #{account.email})")
+    Account saveForOauth(@Param("account") Account account);
+
+    @Update("UPDATE mydb.account SET user_emailCheckToken=#{account.emailCheckToken} WHERE user_email = #{account.email}")
     void insertEmailCheckToken(@Param("account") Account account);
 
     @Select("SELECT * from mydb.account WHERE user_email = #{email}")
@@ -34,7 +41,7 @@ public interface AccountMapper{
     @Update("UPDATE mydb.account SET user_joinedAt=#{account.joinedAt}, user_emailVerified=#{account.emailVerified} WHERE user_email=#{account.email}")
     void verifiedAccount(@Param("account") Account account);
 
-    @Select("SELECT * from mydb.account WHERE user_id = #{username}")
+    @Select("SELECT * from mydb.account WHERE user_id = #{user_id}")
     @Results({
             @Result (property="user_id", column="user_id"),
             @Result (property="password", column="user_password"),
@@ -45,11 +52,17 @@ public interface AccountMapper{
             @Result (property="joinedAt", column="user_JoinedAt"),
             @Result (property="findPasswordToken", column="user_findPasswordToken")
     })
-    Account findByUserId(String username);
+    Account findByUserId(String user_id);
 
     @Insert("UPDATE mydb.account SET user_findPasswordToken=#{account.findPasswordToken} WHERE user_email = #{account.email}")
     void insertFindPasswordToken(@Param("account") Account account);
 
     @Insert("UPDATE mydb.account SET user_password=#{password}, user_findPasswordToken=null WHERE user_email = #{email}")
     void updatePassword(String password, String email);
+
+    @Update("UPDATE mydb.account SET user_password=#{signUpForm.password}, user_name=#{signUpForm.name} WHERE user_id = #{user_id}")
+    void updateAccount(@Param("signUpForm")SignUpForm signUpForm, String user_id);
+
+    @Update("UPDATE mydb.account SET user_id=#{account.user_id}, user_name=#{account.name} WHERE user_email = #{account.email}")
+    Account updateForOauth(@Param("account") Account account);
 }
