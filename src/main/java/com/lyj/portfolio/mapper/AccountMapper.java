@@ -17,9 +17,9 @@ public interface AccountMapper{
             " VALUES(#{account.user_id}, #{account.password}, #{account.name}, #{account.email})")
     void save(@Param("account") Account account);
 
-    @Insert("INSERT INTO mydb.account(user_id, user_name, user_email)" +
-            " VALUES(#{account.user_id}, #{account.name}, #{account.email})")
-    Account saveForOauth(@Param("account") Account account);
+    @Insert("INSERT INTO mydb.account(user_id, user_name, user_email, user_emailVerified)" +
+            " VALUES(#{account.user_id}, #{account.name}, #{account.email}, #{account.emailVerified})")
+    void saveForOauth(@Param("account") Account account);
 
     @Update("UPDATE mydb.account SET user_emailCheckToken=#{account.emailCheckToken} WHERE user_email = #{account.email}")
     void insertEmailCheckToken(@Param("account") Account account);
@@ -64,5 +64,5 @@ public interface AccountMapper{
     void updateAccount(@Param("signUpForm")SignUpForm signUpForm, String user_id);
 
     @Update("UPDATE mydb.account SET user_id=#{account.user_id}, user_name=#{account.name} WHERE user_email = #{account.email}")
-    Account updateForOauth(@Param("account") Account account);
+    void updateForOauth(@Param("account") Account account);
 }

@@ -115,8 +115,7 @@
 <script th:replace="fragments::logout"></script>
 <script src="/node_modules/summernote/dist/summernote-lite.js"></script>
 <script src="/node_modules/summernote/dist/lang/summernote-ko-KR.js"></script>
-<script th:replace="fragments.html :: ajax-csrf-header"></script>
-
+<!--csrf disable 설정넣어서 ajax 전송시 token 받을 필요 없어짐. 해당 관련 페이지들 전부 csrf fragment 지움 -->
 <script type="application/javascript" th:inline="javascript">
     var account = /*[[${account}]]*/ null;
     var lastPage = null;

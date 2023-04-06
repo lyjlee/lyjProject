@@ -18,7 +18,7 @@ public class Account {
     private String emailCheckToken;
     private LocalDateTime joinedAt;
     private String findPasswordToken;
-    private Role role = Role.USER;
+    private Role role=Role.USER;
 
 
     public void generatedEmailCheckToken() {

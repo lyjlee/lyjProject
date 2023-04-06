@@ -22,7 +22,8 @@ import java.util.List;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class AccountService implements UserDetailsService {
+public class AccountService
+{
     private final AccountMapper accountMapper;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
@@ -77,24 +78,6 @@ public class AccountService implements UserDetailsService {
         newAccount.setEmail(newAccount.getEmail());
         newAccount.setJoinedAt(LocalDateTime.now());
         accountMapper.verifiedAccount(newAccount);
-    }
-
-    public void login(Account account) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new UserAccount(account), //principle 에 맞는 객체로 변경해줌.
-                account.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE USER")));
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(token);
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountMapper.findByUserId(username);
-        return new UserAccount(account);
     }
 
     public void applyChangedPassword(SignUpForm signUpForm) {

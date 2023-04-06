@@ -2,9 +2,12 @@ package com.lyj.portfolio.account;
 
 import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
+import com.lyj.portfolio.login.AccountAdapter;
+import com.lyj.portfolio.login.CustomUserDetailsService;
 import com.lyj.portfolio.mapper.AccountMapper;
 import com.lyj.portfolio.validator.SignUpFormValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -18,6 +21,7 @@ import javax.validation.Valid;
 public class AccountController {
     private final SignUpFormValidator signUpFormValidator;
     private final AccountService accountService;
+    private final CustomUserDetailsService userDetailsService;
     private final AccountMapper accountMapper;
 
 
@@ -41,7 +45,7 @@ public class AccountController {
             return view;
         }
         accountService.finishNewAccount(account);
-        accountService.login(account);
+        userDetailsService.login(account);
         model.addAttribute("name",account.getName());
         return view;
     }
@@ -64,13 +68,13 @@ public class AccountController {
             return "account/sign-up";
         }
         Account account = accountService.processNewAccount(signUpForm);
-        accountService.login(account);
+        userDetailsService.login(account);
         model.addAttribute("account",account);
         return "redirect:/";
     }
 
     @GetMapping("/account/resend-email")
-    public String reSendEmailToken(@CurrentAccount Account account, Model model) {
+    public String reSendEmailToken(@AuthenticationPrincipal AccountAdapter user, Model model) {
         return "account/resend-email";
     }
 

@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Movie;
+import com.lyj.portfolio.login.AccountAdapter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +18,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
     @GetMapping("/movie-view")
-    public String viewMovie(@CurrentAccount Account account,
+    public String viewMovie(@AuthenticationPrincipal AccountAdapter user,
                      @RequestParam(value = "subject") String subject, Model model) {
-        if(account != null) {
-            model.addAttribute(account);
-            Movie myComment = movieService.getMyComment(account.getUser_id(), subject);
-            if(myComment == null) {
-                model.addAttribute("myComment", new Movie());
-            }else {
-                model.addAttribute("myComment", myComment);
-            }
+        if(user != null) {
+            model.addAttribute("account",user.getAccount());
+            Movie myComment = movieService.getMyComment(user.getAccount().getUser_id(), subject);
+            model.addAttribute("myComment", Objects.requireNonNullElseGet(myComment, Movie::new));
         }else {
             model.addAttribute("account",new Account());
             model.addAttribute("myComment", new Movie());
@@ -84,12 +83,16 @@ public class MovieController {
     }
 
     @PostMapping("/add-comment")
-    public String addComment(@CurrentAccount Account account, @Valid Movie movie,
+    public String addComment(@AuthenticationPrincipal AccountAdapter user, @Valid Movie movie,
                              HttpServletResponse response, Model model) throws IOException {
         response.setContentType("text/html; charset=UTF-8");
-        if(account != null) {
-            model.addAttribute(account);
+
+        if(user != null) {
+            model.addAttribute("account",user.getAccount());
+        }else {
+            model.addAttribute("account",new Account());
         }
+
         movieService.addComment(movie);
 
         PrintWriter out = response.getWriter();

@@ -32,11 +32,13 @@ public class OAuthAttributes {
                 .build();
     }
 
-//    public Account toEntity() {
-//        return Account.builder()
-//                .user_id(name)
-//                .email(email)
-//                .role(Role.USER)
-//                .build();
-//    }
+    public Account toEntity() {
+        return Account.builder()
+                .user_id(name)
+                .email(email)
+                .name("new_User")
+                .role(Role.USER)
+                .emailVerified(true)
+                .build();
+    }
 }

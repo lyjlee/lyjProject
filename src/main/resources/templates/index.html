@@ -5,10 +5,16 @@
 <head th:replace="fragments::head">
 </head>
 <body class="bg-light">
-    <div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+    <div class="alert alert-warning" role="alert" th:if="${!#strings.isEmpty(account.user_id) && !account.emailVerified}">
         이메일 인증이 완료되지 않았습니다.
         <a href="#" th:href="@{/account/resend-email}" class="alert-link">이메일 인증 재전송하기</a>
     </div>
+    <div th:if="${!#strings.isEmpty(account.user_id)}">
+        <p th:text="${account.user_id}"></p>
+        <p th:text="${account.email}"></p>
+        <p th:text="${account.emailVerified}"></p>
+    </div>
+    <p sec:authentication="principal"></p>
     <div th:replace="fragments::main-nav"></div>
 
     <div class="container row justify-content-center">
