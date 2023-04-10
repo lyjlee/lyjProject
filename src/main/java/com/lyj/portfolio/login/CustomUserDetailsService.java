@@ -1,7 +1,6 @@
 package com.lyj.portfolio.login;
 
 import com.lyj.portfolio.VO.Account;
-import com.lyj.portfolio.account.UserAccount;
 import com.lyj.portfolio.mapper.AccountMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

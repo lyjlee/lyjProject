@@ -87,8 +87,13 @@ public class AccountService
     }
 
     public Account updateAccount(SignUpForm signUpForm, String user_id) {
-        accountMapper.updateAccount(signUpForm, user_id);
-        return accountMapper.findByUserId(user_id);
+        if(signUpForm.getPassword() != null) {
+            accountMapper.updateAccount(signUpForm, user_id);
+            return accountMapper.findByUserId(user_id);
+        }else {
+            accountMapper.updateWithoutPwd(signUpForm, user_id);
+            return accountMapper.findByUserId(user_id);
+        }
     }
 
     public boolean checkPassword(String password, String user_id) {

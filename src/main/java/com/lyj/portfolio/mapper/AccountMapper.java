@@ -63,6 +63,9 @@ public interface AccountMapper{
     @Update("UPDATE mydb.account SET user_password=#{signUpForm.password}, user_name=#{signUpForm.name} WHERE user_id = #{user_id}")
     void updateAccount(@Param("signUpForm")SignUpForm signUpForm, String user_id);
 
+    @Update("UPDATE mydb.account SET user_name=#{signUpForm.name} WHERE user_id = #{user_id}")
+    void updateWithoutPwd(@Param("signUpForm")SignUpForm signUpForm, String user_id);
+
     @Update("UPDATE mydb.account SET user_id=#{account.user_id}, user_name=#{account.name} WHERE user_email = #{account.email}")
     void updateForOauth(@Param("account") Account account);
 }

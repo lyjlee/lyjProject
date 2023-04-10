@@ -27,9 +27,10 @@
 
       <div class="form-group mb-3">
         <label for="password">패스워드</label>
-        <input id="password" type="password" name="password" th:field="*{password}" class="form-control">
+        <input id="password" type="password" name="password" th:field="*{password}" class="form-control" required minlength="8" maxlength="50">
+        <button class="btn btn-secondary float-end" onclick="pwdChange()">수정</button>
         <small class="invalid-feedback">패스워드를 입력하세요.</small><br>
-      </div>
+        <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</small></div>
 
       <div class="form-group mb-3">
         <label for="name">이름</label>
@@ -52,6 +53,7 @@
 </div>
 </body>
 <script th:replace="fragments::form-validation"></script>
+<script th:replace="fragments::logout"></script>
 <script type="application/javascript" th:inline="javascript">
   $(document).ready(function () {
     let user_id = /*[[${account.user_id}]]*/ null;
@@ -60,11 +62,19 @@
     let email = /*[[${account.email}]]*/ null;
 
     $("#user_id").val(user_id);
-    $("#password").val(password);
+    $("#password").val(password).attr("required",false);
+    $("#password").attr("readOnly",true);
+    $("#password").attr("disabled",true);
+
+
     $("#name").val(name);
     $("#email").val(email);
 
-
-
   });
+  function pwdChange() {
+    $("#password").val("").attr("required",true);
+    $("#password").attr("readOnly",false);
+    $("#password").attr("disabled",false);
+
+  }
 </script>
