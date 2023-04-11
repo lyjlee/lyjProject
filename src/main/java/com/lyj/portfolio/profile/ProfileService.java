@@ -14,7 +14,7 @@ import java.util.List;
 public class ProfileService {
     private final MovieMapper movieMapper;
 
-    public List<Movie> getMyComment(String userId) {
-        return movieMapper.getMyComment(userId);
+    public List<Movie> getMyCommentOnMyPage(String userId) {
+        return movieMapper.getMyCommentOnMyPage(userId);
     }
 }

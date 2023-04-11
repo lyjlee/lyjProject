@@ -20,12 +20,17 @@ public interface MovieMapper {
     })
     List<Movie> selectAllMovies();
 
-    @Select("SELECT * from mydb.movie_eval WHERE movie_subject=#{subject}")
+    //좋아요 개수 포함한 한줄평 전부 가져오기
+    @Select("SELECT A.movie_score, A.movie_comment, A.movie_user_id, A.comment_submittedat, " +
+            "(SELECT COALESCE(count(movie_likes.movie_likes), '0') as comment_likes " +
+            "FROM mydb.movie_likes WHERE movie_host_id=A.movie_user_id AND movie_subject=#{subject}) " +
+            "FROM mydb.movie_eval A WHERE movie_subject=#{subject}")
     @Results({
             @Result(property="score", column="movie_score"),
             @Result (property="comment", column="movie_comment"),
             @Result (property="user_id", column="movie_user_id"),
-            @Result (property="submittedAt", column="comment_submittedat")
+            @Result (property="submittedAt", column="comment_submittedat"),
+            @Result (property="likes", column="comment_likes")
     })
     List<Movie> getMovieEval(String subject);
 
@@ -40,14 +45,20 @@ public interface MovieMapper {
     })
     Movie selectMovies(String subject);
 
-    @Select("SELECT * from mydb.movie_eval WHERE movie_subject=#{subject} AND movie_user_id=#{user_id}")
+
+    //좋아요 개수 포함한 내 한줄평 가져오기
+    @Select("SELECT A.movie_score, A.movie_comment, A.movie_user_id, A.comment_submittedat, " +
+            "(SELECT COALESCE(count(movie_likes.movie_likes), '0') as comment_likes " +
+            "FROM mydb.movie_likes WHERE movie_host_id=A.movie_user_id AND movie_subject=#{subject}) " +
+            "FROM mydb.movie_eval A WHERE movie_subject=#{subject} AND movie_user_id=#{user_id}")
     @Results({
             @Result(property="score", column="movie_score"),
             @Result (property="comment", column="movie_comment"),
             @Result (property="user_id", column="movie_user_id"),
-            @Result (property="submittedAt", column="comment_submittedat")
+            @Result (property="submittedAt", column="comment_submittedat"),
+            @Result (property="likes", column="comment_likes")
     })
-    Movie getyMyComment(String user_id, String subject);
+    Movie getMyComment(String user_id, String subject);
 
     @Update("UPDATE mydb.movie_eval SET movie_comment=#{movie.comment}, " +
             "movie_score=#{movie.score},comment_submittedat=current_timestamp " +
@@ -56,6 +67,10 @@ public interface MovieMapper {
 
     @Delete("DELETE FROM mydb.movie_eval WHERE movie_subject=#{subject} and movie_user_id=#{user_id}")
     void removeComment(String subject, String user_id);
+
+    //한줄평 삭제시 동시에 좋아요도 제거
+    @Delete("DELETE FROM mydb.movie_likes WHERE movie_subject=#{subject} AND movie_host_id=#{userId}")
+    void removeCommentLikes(String subject, String userId);
 
     @Insert("INSERT INTO mydb.movie_eval(movie_subject, movie_score, movie_comment, movie_user_id, comment_submittedAt)" +
             " VALUES(#{movie.subject}, #{movie.score}, #{movie.comment},#{movie.user_id},current_timestamp)")
@@ -72,5 +87,22 @@ public interface MovieMapper {
             @Result (property="user_id", column="movie_user_id"),
             @Result (property="submittedAt", column="comment_submittedat")
     })
-    List<Movie> getMyComment(String userId);
+    List<Movie> getMyCommentOnMyPage(String userId);
+
+    //좋아요 클릭 여부
+    @Select("SELECT EXISTS (SELECT 1 FROM mydb.movie_likes " +
+            "WHERE movie_subject = #{subject} AND movie_host_id = #{hostId} AND movie_user_id = #{userId})")
+    boolean existsLikes(String userId, String hostId, String subject);
+
+    //좋아요 추가
+    @Insert("INSERT INTO mydb.movie_likes(movie_subject, movie_host_id, movie_user_id, movie_likes)" +
+            " VALUES(#{subject},#{hostId},#{userId},1)")
+    void addLikes(String userId, String hostId, String subject);
+
+    //좋아요 제거
+    @Delete("DELETE FROM mydb.movie_likes WHERE movie_subject=#{subject} AND movie_user_id=#{userId} AND movie_host_id=#{hostId}")
+    void removeLikes(String userId,String hostId,String subject);
+
+
+
 }

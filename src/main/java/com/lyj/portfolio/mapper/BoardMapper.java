@@ -70,7 +70,12 @@ public interface BoardMapper {
 
 //    게시글 삭제
     @Delete("DELETE FROM mydb.BOARD WHERE board_no = #{no}")
-    boolean removeBoard(int no);
+    void removeBoard(int no);
+//    댓글도 함께 삭제
+    @Delete("DELETE FROM mydb.REPLY WHERE board_no = #{no}")
+    void removeWithReply(int no);
+
+
 
 
 /*Todo 댓글 불러오기 (기존 버전)*/

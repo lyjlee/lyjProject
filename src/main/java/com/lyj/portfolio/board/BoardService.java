@@ -47,8 +47,9 @@ public class BoardService {
         return viewBoard(no);
     }
 
-    public boolean removeBoard(int no) {
-        return boardMapper.removeBoard(no);
+    public void removeBoard(int no) {
+        boardMapper.removeBoard(no);
+        boardMapper.removeWithReply(no);
     }
 
     public void boardViewCount(int no) {

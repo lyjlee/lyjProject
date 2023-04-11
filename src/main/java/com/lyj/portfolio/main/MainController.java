@@ -2,7 +2,6 @@ package com.lyj.portfolio.main;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Board;
 import com.lyj.portfolio.VO.Movie;

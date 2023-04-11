@@ -65,3 +65,8 @@ VALUES ('inception', 3, '좋아요', 'lyj6752',current_timestamp),
        ('memento', 3, '그냥그래요', 'ads1asd2',current_timestamp),
        ('memento', 2, '난해해요', 'sd8sad8',current_timestamp);
 
+INSERT INTO mydb.movie_likes (movie_subject, movie_likes, movie_host_id, movie_user_id)
+VALUES ('inception', 1, 'lyj6752' ,'lyj67522'),
+       ('inception', 1, 'lyj6752' ,'LYJ'),
+       ('memento', 1 , 'ads1asd2' ,'lyj67524');
+

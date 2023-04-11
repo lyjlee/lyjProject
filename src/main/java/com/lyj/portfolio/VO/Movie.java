@@ -13,10 +13,11 @@ public class Movie {
     private String subject;
     private String img;
     private String genre;
-    private int avg_score;
+    private float avg_score;
     private int score;
     private String comment;
     private String user_id;
     private Timestamp submittedAt;
+    private int likes;
 
 }

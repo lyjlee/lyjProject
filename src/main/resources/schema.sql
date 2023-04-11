@@ -7,6 +7,7 @@ drop table if exists persistent_logins;
 drop table if exists Reply;
 drop table if exists movie_db;
 drop table if exists movie_eval;
+drop table if exists movie_likes;
 
 
 create table Account
@@ -65,5 +66,13 @@ CREATE TABLE movie_eval
     movie_comment varchar(64) NOT NULL,
     movie_user_id  varchar(64) NOT NULL,
     comment_submittedAt timestamp without time zone NOT NULL
+);
+
+CREATE TABLE movie_likes
+(
+    movie_subject varchar(64) NOT NULL,
+    movie_likes int DEFAULT NULL,
+    movie_host_id varchar(64) NOT NULL,
+    movie_user_id varchar(64) NOT NULL
 );
 

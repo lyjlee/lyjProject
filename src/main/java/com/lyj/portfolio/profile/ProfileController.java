@@ -1,6 +1,5 @@
 package com.lyj.portfolio.profile;
 
-import com.lyj.portfolio.CurrentAccount;
 import com.lyj.portfolio.VO.Account;
 import com.lyj.portfolio.VO.Movie;
 import com.lyj.portfolio.account.AccountService;
@@ -32,7 +31,7 @@ public class ProfileController {
 
     @GetMapping("/profile-myPage")
     public String myPage(@AuthenticationPrincipal AccountAdapter user, Model model, HttpServletRequest request) throws IOException {
-        List<Movie> myCommentList = profileService.getMyComment(user.getAccount().getUser_id());
+        List<Movie> myCommentList = profileService.getMyCommentOnMyPage(user.getAccount().getUser_id());
         model.addAttribute(user.getAccount());
         model.addAttribute("myCommentList",myCommentList);
         return "profile/myPage";
