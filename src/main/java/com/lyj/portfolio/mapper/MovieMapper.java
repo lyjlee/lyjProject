@@ -100,7 +100,8 @@ public interface MovieMapper {
     void addLikes(String userId, String hostId, String subject);
 
     //좋아요 제거
-    @Delete("DELETE FROM mydb.movie_likes WHERE movie_subject=#{subject} AND movie_user_id=#{userId} AND movie_host_id=#{hostId}")
+    @Delete("DELETE FROM mydb.movie_likes WHERE movie_subject=#{subject} " +
+            "AND movie_user_id=#{userId} AND movie_host_id=#{hostId}")
     void removeLikes(String userId,String hostId,String subject);
 
 

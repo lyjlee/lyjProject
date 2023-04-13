@@ -4,6 +4,11 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments::head">
 </head>
+<style>
+    .likes_img:hover {
+        background-image: url("/images/likes2.png");
+    }
+</style>
 <body class="bg-light">
     <div class="alert alert-warning" role="alert" th:if="${!#strings.isEmpty(account.user_id) && !account.emailVerified}">
         이메일 인증이 완료되지 않았습니다.
@@ -34,7 +39,9 @@
                         <div class="p-3 mt-2 rounded-4" th:if="${!#strings.isEmpty(account.user_id) && list.user_id != account.user_id}" style="background-color: #cccccc">
                             <h5 th:class="score+${list.score}" th:text="${list.score}">점수</h5>
                             <p class="mb-5" th:text="${list.comment}">한줄평</p>
-                            <p class="text-start"><span th:attr="onclick=|likesBtn('${list.user_id}')|" style="cursor: pointer">좋아요 : </span><span th:id="'likes' + ${list.user_id}" th:text="${list.likes}">숫자</span></p>
+                            <p class="text-start">
+                                <img src="/images/likes.png" th:attr="onclick=|likesBtn('${list.user_id}')|" style="cursor: pointer" class="likes_img" alt="">
+                                <span th:id="'likes' + ${list.user_id}" th:text="${list.likes}">숫자</span></p>
                             <p class="text-end" th:text="${list.user_id}">아이디</p>
                             <p class="text-end" th:text="${#dates.format(list.submittedAt, 'yyyy-MM-dd')}">등록일</p>
                         </div>
@@ -54,7 +61,9 @@
                     <div class="p-3 mt-2 rounded-4" id="commentDiv" style="background-color: #666699">
                        <h5 th:class="score+${myComment.score}" th:text="${myComment.score}">점수</h5>
                        <p class="mb-5" th:text="${myComment.comment}">한줄평</p>
-                        <p class="text-start"><span>좋아요 : </span><span th:text="${myComment.likes}">숫자</span></p>
+                        <p class="text-start">
+                            <img src="/images/likes.png" alt=""></img>
+                            <span th:text="${myComment.likes}">숫자</span></p>
                         <p class="text-end" th:text="${myComment.user_id}">아이디</p>
                        <p class="text-end" th:text="${#dates.format(myComment.submittedAt, 'yyyy-MM-dd')}">등록일</p>
                         <div class="text-end" id="commentBtn">
