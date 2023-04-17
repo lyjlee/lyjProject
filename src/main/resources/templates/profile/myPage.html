@@ -16,11 +16,11 @@
     <h2>마이 페이지</h2>
   </div>
   <div class="row justify-content-center">
-    <div class="col-1">
+    <div class="col-sm-1">
       <div th:replace="fragments::profile-menu(currentMenu='myPage')"></div>
     </div>
 
-    <div class="col-10 d-flex">
+    <div class="col-sm-6 d-flex">
       <div class="card me-5" th:if="${#lists.size(myCommentList)}  > 0"
            th:each="list : ${myCommentList}"
            th:onclick="|location.href='@{/movie-view( subject=${list.subject} )}'|"
@@ -31,8 +31,12 @@
           <p class="card-text text-capitalize" th:text="${list.genre}">장르</p>
           <h5 th:class="score+${list.score}" th:text="${list.score}">점수</h5>
           <p class="mb-5" th:text="${list.comment}">한줄평</p>
-          <p class="text-end" th:text="${#dates.format(list.submittedAt, 'yyyy-MM-dd')}">등록일</p>
+          <small class="float-end" th:text="${#dates.format(list.submittedAt, 'yyyy-MM-dd')}">등록일</small>
         </div>
+      </div>
+      <div class="text-center col-10" th:if="${#lists.size(myCommentList)} == 0">
+        <h2>영화를 1개 이상 평가해주세요!</h2>
+        <a class="text-muted" th:href="@{/movie-index}">영화 평가하러 가기</a>
       </div>
     </div>
   </div>

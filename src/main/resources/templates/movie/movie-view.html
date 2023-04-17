@@ -62,7 +62,7 @@
                        <h5 th:class="score+${myComment.score}" th:text="${myComment.score}">점수</h5>
                        <p class="mb-5" th:text="${myComment.comment}">한줄평</p>
                         <p class="text-start">
-                            <img src="/images/likes.png" alt=""></img>
+                            <img src="/images/likes.png" alt="">
                             <span th:text="${myComment.likes}">숫자</span></p>
                         <p class="text-end" th:text="${myComment.user_id}">아이디</p>
                        <p class="text-end" th:text="${#dates.format(myComment.submittedAt, 'yyyy-MM-dd')}">등록일</p>
@@ -99,6 +99,9 @@
                         </form>
                     </div>
                 </div>
+                <br>
+                <a class="btn btn-secondary float-end" th:href="@{movie-index}">목록</a>
+
             </div>
         </div>
     </div>
