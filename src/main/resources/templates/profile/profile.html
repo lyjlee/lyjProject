@@ -37,7 +37,7 @@
 
                 <div class="form-group mb-3">
                     <label for="joinedAt">가입일</label>
-                    <input th:if="${!#strings.isEmpty(updatedAccount.joinedAt)}" id="joinedAt" type="email" name="email" th:value="${account.joinedAt}" class="form-control" readonly>
+                    <input th:if="${!#strings.isEmpty(updatedAccount.joinedAt)}" id="joinedAt" type="email" name="email" th:value="${#temporals.format(updatedAccount.joinedAt, 'yyyy-MM-dd')}" class="form-control" readonly>
                     <p th:if="${#strings.isEmpty(updatedAccount.joinedAt)}" class="form-control text-danger">이메일 인증을 완료해주세요</p>
                 </div>
 
